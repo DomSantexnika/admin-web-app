@@ -1,10 +1,10 @@
-import { Layout } from "@/components/layout/layout";
-import "@/styles/globals.css";
+import { Layout } from '@/components/layout/layout'
+import '@/styles/globals.css'
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode
 }) {
-  return <Layout>{children}</Layout>;
+	return <Layout>{children}</Layout>
 }
