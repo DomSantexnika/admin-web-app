@@ -2,6 +2,7 @@ import { Input, Navbar, NavbarContent } from '@nextui-org/react'
 import React from 'react'
 import { SearchIcon } from '../icons/searchicon'
 import { BurguerButton } from './burguer-button'
+import { DarkModeSwitch } from './darkmodeswitch'
 import { NotificationsDropdown } from './notifications-dropdown'
 import { UserDropdown } from './user-dropdown'
 
@@ -22,6 +23,7 @@ export const NavbarWrapper = ({ children }: Props) => {
 				<NavbarContent className='md:hidden'>
 					<BurguerButton />
 				</NavbarContent>
+
 				<NavbarContent className='w-full max-md:hidden'>
 					<Input
 						startContent={<SearchIcon />}
@@ -31,9 +33,10 @@ export const NavbarWrapper = ({ children }: Props) => {
 							input: 'w-full',
 							mainWrapper: 'w-full',
 						}}
-						placeholder='Search...'
+						placeholder='Поиск...'
 					/>
 				</NavbarContent>
+				<DarkModeSwitch />
 				<NavbarContent
 					justify='end'
 					className='w-fit data-[justify=end]:flex-grow-0'

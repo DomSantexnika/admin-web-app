@@ -1,6 +1,8 @@
 import { menuConfig } from '@/config/menu'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSidebarContext } from '../layout/layout-context'
+import Logo from '../shared/logo'
 import { SidebarItem } from './sidebar-item'
 import { SidebarMenu } from './sidebar-menu'
 import { Sidebar } from './sidebar.styles'
@@ -19,7 +21,11 @@ export const SidebarWrapper = () => {
 					collapsed: collapsed,
 				})}
 			>
-				<div className={Sidebar.Header()}></div>
+				<div className={Sidebar.Header()}>
+					<Link href='/' className='block'>
+						<Logo className='w-full' />
+					</Link>
+				</div>
 				<div className='flex flex-col justify-between h-full'>
 					<div className={Sidebar.Body()}>
 						<SidebarMenu title=''>
@@ -32,6 +38,12 @@ export const SidebarWrapper = () => {
 									icon={item.icon}
 								/>
 							))}
+							<SidebarItem
+								key='https://localhost:3000'
+								href='https://localhost:3000'
+								title='Интернет-магазин'
+								target='_blank'
+							/>
 						</SidebarMenu>
 					</div>
 					<div className={Sidebar.Footer()}></div>
