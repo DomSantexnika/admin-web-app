@@ -8,7 +8,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@nextui-org/react'
-
 import Link from 'next/link'
 
 type Props = {
@@ -21,7 +20,6 @@ export default function OrderTable({ data }: Props) {
 			<TableHeader>
 				<TableColumn>Код</TableColumn>
 				<TableColumn>Цена</TableColumn>
-				<TableColumn>Создан</TableColumn>
 				<TableColumn>Создан</TableColumn>
 			</TableHeader>
 			<TableBody
@@ -36,12 +34,16 @@ export default function OrderTable({ data }: Props) {
 				{data &&
 					data.map(item => (
 						<TableRow key={item.id}>
-							<TableCell>{item.code}</TableCell>
+							<TableCell>
+								<Link
+									className='font-bold underline'
+									href={`/orders/${item.id}`}
+								>
+									{item.code}
+								</Link>
+							</TableCell>
 							<TableCell>{item.totalPrice}</TableCell>
 							<TableCell>{time(item.createdAt).fromNow()}</TableCell>
-							<TableCell>
-								<Link href={`/orders/${item.id}`}>Open</Link>
-							</TableCell>
 						</TableRow>
 					))}
 			</TableBody>

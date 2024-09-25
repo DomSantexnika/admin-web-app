@@ -11,7 +11,7 @@ import {
 	useDisclosure,
 } from '@nextui-org/react'
 
-export const ProductCreate = () => {
+export const ProductCreateModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
 	return (

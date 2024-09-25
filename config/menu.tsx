@@ -22,8 +22,8 @@ export const menuConfig = {
 			icon: <ProductsIcon />,
 		},
 		{
-			name: 'Клиенты',
-			href: '/customers',
+			name: 'Пользователи',
+			href: '/accounts',
 			icon: <CustomersIcon />,
 		},
 		{

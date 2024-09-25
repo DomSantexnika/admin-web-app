@@ -31,7 +31,7 @@ export const Overlay = tv({
 })
 
 export const Header = tv({
-	base: 'flex gap-8 items-center px-6',
+	base: 'flex gap-8 items-center px-2',
 })
 
 export const Body = tv({
@@ -39,7 +39,7 @@ export const Body = tv({
 })
 
 export const Footer = tv({
-	base: 'flex items-center justify-center gap-6 pt-16 pb-8 px-8 md:pt-10 md:pb-0',
+	base: 'flex items-center justify-between gap-6 pt-16 pb-8 md:pt-10 md:pb-0',
 })
 
 export const Sidebar = Object.assign(SidebarWrapper, {

@@ -1,6 +1,9 @@
+import { deleteAuthCookie } from '@/actions/auth.action'
 import { menuConfig } from '@/config/menu'
+import { Button } from '@nextui-org/react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback } from 'react'
 import { useSidebarContext } from '../layout/layout-context'
 import Logo from '../shared/logo'
 import { SidebarItem } from './sidebar-item'
@@ -10,6 +13,13 @@ import { Sidebar } from './sidebar.styles'
 export const SidebarWrapper = () => {
 	const pathname = usePathname()
 	const { collapsed, setCollapsed } = useSidebarContext()
+
+	const router = useRouter()
+
+	const handleLogout = useCallback(async () => {
+		await deleteAuthCookie()
+		router.replace('/login')
+	}, [router])
 
 	return (
 		<aside className='h-screen z-[20] sticky top-0'>
@@ -23,7 +33,7 @@ export const SidebarWrapper = () => {
 			>
 				<div className={Sidebar.Header()}>
 					<Link href='/' className='block'>
-						<Logo className='w-full' />
+						<Logo className='w-full' color='#fff' />
 					</Link>
 				</div>
 				<div className='flex flex-col justify-between h-full'>
@@ -46,7 +56,12 @@ export const SidebarWrapper = () => {
 							/>
 						</SidebarMenu>
 					</div>
-					<div className={Sidebar.Footer()}></div>
+					<div className={Sidebar.Footer()}>
+						<Button color='danger' onClick={handleLogout}>
+							Выйти
+						</Button>
+						{/* <DarkModeSwitchButton /> */}
+					</div>
 				</div>
 			</div>
 		</aside>

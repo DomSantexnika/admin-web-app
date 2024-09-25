@@ -1,6 +1,6 @@
+import Logo from '@/components/shared/logo'
 import { Divider } from '@nextui-org/divider'
 import { Image } from '@nextui-org/react'
-import Logo from '../shared/logo'
 
 interface Props {
 	children: React.ReactNode

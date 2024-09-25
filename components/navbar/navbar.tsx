@@ -1,10 +1,6 @@
-import { Input, Navbar, NavbarContent } from '@nextui-org/react'
+import { Navbar, NavbarContent } from '@nextui-org/react'
 import React from 'react'
-import { SearchIcon } from '../icons/searchicon'
-import { BurguerButton } from './burguer-button'
-import { DarkModeSwitch } from './darkmodeswitch'
-import { NotificationsDropdown } from './notifications-dropdown'
-import { UserDropdown } from './user-dropdown'
+import { BurgerButton } from './burger-button'
 
 interface Props {
 	children: React.ReactNode
@@ -21,31 +17,7 @@ export const NavbarWrapper = ({ children }: Props) => {
 				}}
 			>
 				<NavbarContent className='md:hidden'>
-					<BurguerButton />
-				</NavbarContent>
-
-				<NavbarContent className='w-full max-md:hidden'>
-					<Input
-						startContent={<SearchIcon />}
-						isClearable
-						className='w-full'
-						classNames={{
-							input: 'w-full',
-							mainWrapper: 'w-full',
-						}}
-						placeholder='Поиск...'
-					/>
-				</NavbarContent>
-				<DarkModeSwitch />
-				<NavbarContent
-					justify='end'
-					className='w-fit data-[justify=end]:flex-grow-0'
-				>
-					<NotificationsDropdown />
-
-					<NavbarContent>
-						<UserDropdown />
-					</NavbarContent>
+					<BurgerButton />
 				</NavbarContent>
 			</Navbar>
 			{children}

@@ -1,8 +1,5 @@
-import type { NextPage } from "next";
-import { Content } from "@/components/home/content";
+import { HomePage } from '@/components/pages/home'
 
-const Home: NextPage = () => {
-  return <Content />;
-};
-
-export default Home;
+export default function Home() {
+	return <HomePage />
+}
