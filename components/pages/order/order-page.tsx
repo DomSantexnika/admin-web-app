@@ -1,11 +1,13 @@
 'use client'
 
+import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import axios from '@/lib/axios'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { OrderPageBlock } from './order-page-block'
 import { OrderPageCard } from './order-page-card'
 import { OrderPageHistory } from './order-page-history'
-import { OrderPageItems } from './order-page-items'
+import { IOrderItem, OrderPageItems } from './order-page-items'
 import { OrderPageServices } from './order-page-services'
 
 interface Props {
@@ -13,7 +15,7 @@ interface Props {
 }
 
 export function OrderShowPage({ id }: Props) {
-	const { data } = useQuery({
+	const { data, refetch } = useQuery({
 		queryKey: ['order', id],
 		queryFn: async () => {
 			const response = await axios.get(`/orders/${id}`)
@@ -21,8 +23,28 @@ export function OrderShowPage({ id }: Props) {
 		},
 	})
 
+	const [isLoading, setIsLoading] = useState(false)
+
 	if (!data) {
-		return <div>Loading...</div>
+		return <LoadingOverlay />
+	}
+
+	const onItemDelete = (item: IOrderItem) => {
+		setIsLoading(true)
+		axios
+			.delete(`/orders/${data.id}/items/${item.id}`)
+			.then(() => refetch())
+			.finally(() => {
+				setTimeout(() => setIsLoading(false), 1000)
+			})
+	}
+
+	const onItemEdit = (item: any, data: any) => {
+		axios
+			.put(`/orders/${item.orderId}/items/${item.id}`, data)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
 	return (
@@ -110,7 +132,11 @@ export function OrderShowPage({ id }: Props) {
 					</OrderPageBlock>
 				</div>
 				<OrderPageBlock name='Товары в заказе'>
-					<OrderPageItems orderId={data.id} />
+					<OrderPageItems
+						onItemDelete={onItemDelete}
+						onItemEdit={onItemEdit}
+						data={data.items || []}
+					/>
 				</OrderPageBlock>
 				<OrderPageBlock name='Дополнительные услуги'>
 					<OrderPageServices orderId={data.id} />
@@ -119,6 +145,7 @@ export function OrderShowPage({ id }: Props) {
 					<OrderPageHistory orderId={data.id} />
 				</OrderPageBlock>
 			</div>
+			{isLoading && <LoadingOverlay />}
 		</div>
 	)
 }

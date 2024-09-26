@@ -38,7 +38,7 @@ export function AuthLayoutWrapper({ children }: Props) {
 					<h1 className='font-bold text-[45px]'>Панель управления</h1>
 					<div className='font-light text-slate-400 mt-4'>
 						Данный сайт предназначена только для сотрудников компании{' '}
-						<b>ООО "БЕРГА ТРЙДИНГ"</b>
+						<b>ООО "БЕРГА ТРЕЙДИНГ"</b>
 					</div>
 				</div>
 			</div>

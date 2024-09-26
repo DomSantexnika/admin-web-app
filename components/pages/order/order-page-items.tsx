@@ -1,4 +1,3 @@
-import axios from '@/lib/axios'
 import {
 	Button,
 	Table,
@@ -8,55 +7,39 @@ import {
 	TableHeader,
 	TableRow,
 } from '@nextui-org/react'
-import { useQuery } from '@tanstack/react-query'
 import { Pencil, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { OrderItemEditModal } from './order-item-edit-modal'
 
-interface Props {
-	orderId: number
-}
-
-interface IOrderItem {
+export interface IOrderItem {
 	id: number
 	price: number
 	quantity: number
 	product: {
 		id: number
 		name: string
+		price: number
 		image: {
 			location: string
 		}
 	}
 }
 
-export function OrderPageItems({ orderId }: Props) {
-	const { data } = useQuery({
-		queryKey: ['order', orderId, 'items'],
-		queryFn: async () => {
-			const response = await axios.get(`/orders/${orderId}/items`)
-			return response.data
-		},
-	})
+interface Props {
+	data: IOrderItem[]
+	onItemDelete: (item: IOrderItem) => void
+	onItemEdit: (item: IOrderItem, data: Record<string, any>) => void
+}
 
-	const itemEditModalDataRef = useRef<IOrderItem>()
+export function OrderPageItems({ data, onItemDelete, onItemEdit }: Props) {
+	const [itemEditModalData, setItemEditModalData] = useState<IOrderItem>()
+
 	const itemEditModalOpenRef = useRef()
 
-	const [itemEditModalOpen, setItemEditModalOpen] = useState(false)
-
-	const router = useRouter()
-
-	const onItemDeleteClick = async (itemId: number) => {
-		axios.delete(`/orders/${orderId}/items/${itemId}`).then(() => {
-			location.reload()
-		})
-	}
-
 	const onItemEditClick = (item: IOrderItem) => {
-		itemEditModalDataRef.current = item
-		itemEditModalOpenRef.current()
+		setItemEditModalData(item)
+		if (itemEditModalOpenRef?.current) itemEditModalOpenRef.current()
 	}
 
 	return (
@@ -88,11 +71,11 @@ export function OrderPageItems({ orderId }: Props) {
 								</TableCell>
 								<TableCell>ASD823</TableCell>
 								<TableCell>{item.product.name}</TableCell>
-								<TableCell>{item.price} руб.</TableCell>
+								<TableCell>{item.product.price} руб.</TableCell>
 								<TableCell>{item.quantity} шт.</TableCell>
 								<TableCell>{item.price} руб.</TableCell>
 								<TableCell>{item.price * item.quantity} руб.</TableCell>
-								<TableCell>0 руб.</TableCell>
+								<TableCell>{item.price - item.product.price} руб.</TableCell>
 								<TableCell>
 									<Button
 										color='primary'
@@ -105,7 +88,11 @@ export function OrderPageItems({ orderId }: Props) {
 									<Button
 										color='danger'
 										size='sm'
-										onClick={() => onItemDeleteClick(item.id)}
+										onClick={() => {
+											if (window.confirm('Вы уверены?')) {
+												onItemDelete(item)
+											}
+										}}
 									>
 										<Trash2 size={16} />
 									</Button>
@@ -116,7 +103,10 @@ export function OrderPageItems({ orderId }: Props) {
 			</Table>
 			<OrderItemEditModal
 				openRef={itemEditModalOpenRef}
-				item={itemEditModalDataRef.current}
+				item={itemEditModalData}
+				onSubmit={data => {
+					onItemEdit(itemEditModalData!, data)
+				}}
 			/>
 		</div>
 	)
