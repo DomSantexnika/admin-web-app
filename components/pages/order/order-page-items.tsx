@@ -10,7 +10,8 @@ import {
 import { Pencil, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
-import { OrderItemEditModal } from './order-item-edit-modal'
+import { OrderItemAddModal } from './modals/order-item-add-modal'
+import { OrderItemEditModal } from './modals/order-item-edit-modal'
 
 export interface IOrderItem {
 	id: number
@@ -30,12 +31,19 @@ interface Props {
 	data: IOrderItem[]
 	onItemDelete: (item: IOrderItem) => void
 	onItemEdit: (item: IOrderItem, data: Record<string, any>) => void
+	onItemAdd: (dto: any) => void
 }
 
-export function OrderPageItems({ data, onItemDelete, onItemEdit }: Props) {
+export function OrderPageItems({
+	data,
+	onItemDelete,
+	onItemEdit,
+	onItemAdd,
+}: Props) {
 	const [itemEditModalData, setItemEditModalData] = useState<IOrderItem>()
 
 	const itemEditModalOpenRef = useRef()
+	const itemAddModalOpenRef = useRef()
 
 	const onItemEditClick = (item: IOrderItem) => {
 		setItemEditModalData(item)
@@ -44,6 +52,16 @@ export function OrderPageItems({ data, onItemDelete, onItemEdit }: Props) {
 
 	return (
 		<div>
+			<div className='p-2'>
+				<Button
+					onClick={() => {
+						if (itemEditModalOpenRef?.current) itemAddModalOpenRef.current()
+					}}
+					color='primary'
+				>
+					Добавить товар
+				</Button>
+			</div>
 			<Table>
 				<TableHeader>
 					<TableColumn>Картинка</TableColumn>
@@ -106,6 +124,12 @@ export function OrderPageItems({ data, onItemDelete, onItemEdit }: Props) {
 				item={itemEditModalData}
 				onSubmit={data => {
 					onItemEdit(itemEditModalData!, data)
+				}}
+			/>
+			<OrderItemAddModal
+				openRef={itemAddModalOpenRef}
+				onSubmit={dto => {
+					onItemAdd(dto)
 				}}
 			/>
 		</div>

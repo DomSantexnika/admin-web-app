@@ -47,6 +47,14 @@ export function OrderShowPage({ id }: Props) {
 			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
+	const onItemAdd = (dto: any) => {
+		axios
+			.post(`/orders/${data.id}/items`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
+	}
+
 	return (
 		<div>
 			<div>
@@ -135,6 +143,7 @@ export function OrderShowPage({ id }: Props) {
 					<OrderPageItems
 						onItemDelete={onItemDelete}
 						onItemEdit={onItemEdit}
+						onItemAdd={onItemAdd}
 						data={data.items || []}
 					/>
 				</OrderPageBlock>
