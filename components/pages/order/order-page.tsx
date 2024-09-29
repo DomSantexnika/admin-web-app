@@ -2,6 +2,7 @@
 
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import axios from '@/lib/axios'
+import { time } from '@/lib/time'
 import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
@@ -102,7 +103,7 @@ export function OrderShowPage({ id }: Props) {
 								},
 								{
 									name: 'Создан',
-									value: data.createdAt,
+									value: time(data.createdAt).calendar(),
 								},
 							]}
 						/>
@@ -122,7 +123,7 @@ export function OrderShowPage({ id }: Props) {
 							items={[
 								{
 									name: 'Тип',
-									value: 'Наличный расчет',
+									value: data.paymentMethod.name,
 								},
 								{
 									name: 'К оплате',
@@ -175,20 +176,20 @@ export function OrderShowPage({ id }: Props) {
 							items={[
 								{
 									name: 'Тип',
-									value: 'Самовывоз',
+									value: data.deliveryMethod[0].deliveryMethod.name,
 								},
 								{
 									name: 'Стоимость',
-									value: '0',
+									value: `${data.deliveryMethod[0].price} руб.`,
 								},
 								{
 									name: 'Время',
-									value: '26.09.2024 (15:00-18:00)',
+									value: time(data.deliveryMethod[0].data).calendar(),
 								},
 								{
 									name: 'Адрес',
-									value: data.address,
-									href: `https://yandex.ru/maps?text=${data.address}`,
+									value: data.addressValue,
+									href: `https://yandex.ru/maps?text=${data.addressValue}`,
 								},
 							]}
 						/>
