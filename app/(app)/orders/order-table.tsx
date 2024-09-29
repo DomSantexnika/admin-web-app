@@ -19,6 +19,7 @@ export default function OrderTable({ data }: Props) {
 		<Table>
 			<TableHeader>
 				<TableColumn>Код</TableColumn>
+				<TableColumn>Статус</TableColumn>
 				<TableColumn>Цена</TableColumn>
 				<TableColumn>Создан</TableColumn>
 			</TableHeader>
@@ -42,6 +43,7 @@ export default function OrderTable({ data }: Props) {
 									{item.code}
 								</Link>
 							</TableCell>
+							<TableCell>{item.status.name}</TableCell>
 							<TableCell>{item.totalPrice}</TableCell>
 							<TableCell>{time(item.createdAt).fromNow()}</TableCell>
 						</TableRow>

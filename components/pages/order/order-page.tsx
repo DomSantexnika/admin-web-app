@@ -2,8 +2,10 @@
 
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import axios from '@/lib/axios'
+import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { OrderCustomerEditModal } from './modals/order-customer-edit-modal'
 import { OrderPageBlock } from './order-page-block'
 import { OrderPageCard } from './order-page-card'
 import { OrderPageHistory } from './order-page-history'
@@ -25,6 +27,8 @@ export function OrderShowPage({ id }: Props) {
 
 	const [isLoading, setIsLoading] = useState(false)
 
+	const customerEditModalOpenRef = useRef()
+
 	if (!data) {
 		return <LoadingOverlay />
 	}
@@ -40,6 +44,7 @@ export function OrderShowPage({ id }: Props) {
 	}
 
 	const onItemEdit = (item: any, data: any) => {
+		setIsLoading(true)
 		axios
 			.put(`/orders/${item.orderId}/items/${item.id}`, data)
 			.then(() => refetch())
@@ -48,8 +53,18 @@ export function OrderShowPage({ id }: Props) {
 	}
 
 	const onItemAdd = (dto: any) => {
+		setIsLoading(true)
 		axios
 			.post(`/orders/${data.id}/items`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
+	}
+
+	const onCustomerEdit = (dto: any) => {
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/customer`, dto)
 			.then(() => refetch())
 			.catch(err => console.error(err))
 			.finally(() => setTimeout(() => setIsLoading(false), 1000))
@@ -71,7 +86,7 @@ export function OrderShowPage({ id }: Props) {
 								},
 								{
 									name: 'Статус',
-									value: 'Создан',
+									value: data.status.name,
 								},
 								{
 									name: 'Создан',
@@ -79,6 +94,9 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+						<div className='p-5 border-t-1 mt-auto'>
+							<Button>Редактировать</Button>
+						</div>
 					</OrderPageBlock>
 					<OrderPageBlock name='Оплата'>
 						<OrderPageCard
@@ -93,6 +111,9 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+						<div className='p-5 border-t-1 mt-auto'>
+							<Button>Редактировать</Button>
+						</div>
 					</OrderPageBlock>
 					<OrderPageBlock name='Покупатель'>
 						<OrderPageCard
@@ -113,6 +134,21 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+						<OrderCustomerEditModal
+							openRef={customerEditModalOpenRef}
+							customer={{
+								email: data.customerEmail,
+								phone: data.customerPhone,
+								firstName: data.customerFirstName,
+								lastName: data.customerLastName,
+							}}
+							onSubmit={onCustomerEdit}
+						/>
+						<div className='p-5 border-t-1 mt-auto'>
+							<Button onClick={customerEditModalOpenRef.current}>
+								Редактировать
+							</Button>
+						</div>
 					</OrderPageBlock>
 
 					<OrderPageBlock name='Доставка'>
@@ -137,6 +173,9 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+						<div className='p-5 border-t-1 mt-auto'>
+							<Button>Редактировать</Button>
+						</div>
 					</OrderPageBlock>
 				</div>
 				<OrderPageBlock name='Товары в заказе'>
@@ -150,9 +189,11 @@ export function OrderShowPage({ id }: Props) {
 				<OrderPageBlock name='Дополнительные услуги'>
 					<OrderPageServices orderId={data.id} />
 				</OrderPageBlock>
-				<OrderPageBlock name='История заказа'>
-					<OrderPageHistory orderId={data.id} />
-				</OrderPageBlock>
+				{data.histories.length && (
+					<OrderPageBlock name='История заказа'>
+						<OrderPageHistory items={data.histories} />
+					</OrderPageBlock>
+				)}
 			</div>
 			{isLoading && <LoadingOverlay />}
 		</div>

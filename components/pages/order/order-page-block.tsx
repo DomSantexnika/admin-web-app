@@ -13,9 +13,7 @@ export function OrderPageBlock({
 }: PropsWithChildren<Props>) {
 	return (
 		<Card>
-			<div className={`p-3 text-center bg-stone-500 font-bold ${className}`}>
-				{name}
-			</div>
+			<div className={`p-3 text-center font-bold  ${className}`}>{name}</div>
 			{children}
 		</Card>
 	)

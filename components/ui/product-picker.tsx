@@ -66,7 +66,7 @@ export default function ProductPicker({ onSelect }: Props) {
 				)}
 			</Autocomplete>
 			{selectedItem && (
-				<div className='flex items-center gap-4 my- w-full'>
+				<div className='flex items-center gap-4 my-4 w-full'>
 					<Image
 						className='object-contain bg-white'
 						src={selectedItem.image.location}

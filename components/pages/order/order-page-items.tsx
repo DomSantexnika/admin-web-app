@@ -52,7 +52,7 @@ export function OrderPageItems({
 
 	return (
 		<div>
-			<div className='p-2'>
+			<div className='p-4 pb-0'>
 				<Button
 					onClick={() => {
 						if (itemEditModalOpenRef?.current) itemAddModalOpenRef.current()

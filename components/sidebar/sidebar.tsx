@@ -1,11 +1,12 @@
 import { deleteAuthCookie } from '@/actions/auth.action'
 import { menuConfig } from '@/config/menu'
-import { Button } from '@nextui-org/react'
+import { ExternalLink, Info, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { useSidebarContext } from '../layout/layout-context'
 import Logo from '../shared/logo'
+import { DarkModeSwitchButton } from '../ui/darkmode-switch-button'
 import { SidebarItem } from './sidebar-item'
 import { SidebarMenu } from './sidebar-menu'
 import { Sidebar } from './sidebar.styles'
@@ -42,25 +43,38 @@ export const SidebarWrapper = () => {
 							{menuConfig.sidebar.map(item => (
 								<SidebarItem
 									key={item.href}
-									isActive={pathname === item.href}
+									isActive={pathname
+										.substring(1)
+										.includes(item.href.substring(1))}
 									href={item.href}
 									title={item.name}
 									icon={item.icon}
 								/>
 							))}
-							<SidebarItem
-								key='https://localhost:3000'
-								href='https://localhost:3000'
-								title='Интернет-магазин'
-								target='_blank'
-							/>
 						</SidebarMenu>
 					</div>
+
 					<div className={Sidebar.Footer()}>
-						<Button color='danger' onClick={handleLogout}>
+						<div className='flex justify-between items-center'>
+							<span>Темный режим</span>
+							<DarkModeSwitchButton />
+						</div>
+						<a
+							href='https://localhost:3000'
+							target='_blank'
+							className='flex items-center gap-2 underline'
+						>
+							<ExternalLink />
+							Интернет-магазин
+						</a>
+						<div className='flex items-center gap-2'>
+							<Info />
+							Версия: 1.0.0
+						</div>
+						<div className='flex items-center gap-2' onClick={handleLogout}>
+							<LogOut />
 							Выйти
-						</Button>
-						{/* <DarkModeSwitchButton /> */}
+						</div>
 					</div>
 				</div>
 			</div>

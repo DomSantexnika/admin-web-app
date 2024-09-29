@@ -1,29 +1,16 @@
-import axios from '@/lib/axios'
-import { useQuery } from '@tanstack/react-query'
+import { time } from '@/lib/time'
 
 interface Props {
-	orderId: number
+	items: Record<string, any>[]
 }
 
-export function OrderPageHistory({ orderId }: Props) {
-	const { data } = useQuery({
-		queryKey: ['order', orderId, 'services'],
-		queryFn: async () => {
-			const response = await axios.get(`/products/${orderId}/services`)
-			return response.data
-		},
-	})
-
-	// if (!data.length) {
-	// 	return <div className='p-4 text-center font-bold'>Услуги не выбрано</div>
-	// }
-
+export function OrderPageHistory({ items }: Props) {
 	return (
 		<div className='flex flex-col'>
-			{new Array(4).fill(null).map((item, index) => (
-				<div className='flex py-3 px-4 gap-6' key={index}>
-					<div className='font-bold text-primary'>Last Friday at 4:22 PM</div>
-					<div>Заказ создан</div>
+			{items.map(item => (
+				<div className='flex py-3 px-4 gap-6' key={item.id}>
+					<div className='text-success'>{time(item.createdAt).calendar()}</div>
+					<div>{item.message}</div>
 				</div>
 			))}
 		</div>
