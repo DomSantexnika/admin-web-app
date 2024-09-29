@@ -6,6 +6,7 @@ import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { OrderCustomerEditModal } from './modals/order-customer-edit-modal'
+import { OrderStatusEditModal } from './modals/order-status-edit-modal'
 import { OrderPageBlock } from './order-page-block'
 import { OrderPageCard } from './order-page-card'
 import { OrderPageHistory } from './order-page-history'
@@ -28,9 +29,20 @@ export function OrderShowPage({ id }: Props) {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const customerEditModalOpenRef = useRef()
+	const orderStatusEditModalOpenRef = useRef()
 
 	if (!data) {
 		return <LoadingOverlay />
+	}
+
+	const onStatusEdit = (dto: any) => {
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/status`, dto)
+			.then(() => refetch())
+			.finally(() => {
+				setTimeout(() => setIsLoading(false), 1000)
+			})
 	}
 
 	const onItemDelete = (item: IOrderItem) => {
@@ -94,8 +106,15 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+						<OrderStatusEditModal
+							status={data.status}
+							onSubmit={onStatusEdit}
+							openRef={orderStatusEditModalOpenRef}
+						/>
 						<div className='p-5 border-t-1 mt-auto'>
-							<Button>Редактировать</Button>
+							<Button onClick={orderStatusEditModalOpenRef.current}>
+								Изменить статус
+							</Button>
 						</div>
 					</OrderPageBlock>
 					<OrderPageBlock name='Оплата'>

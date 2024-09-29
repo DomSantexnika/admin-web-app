@@ -41,59 +41,52 @@ export function OrderCustomerEditModal({ customer, openRef, onSubmit }: Props) {
 					Изменить покупателя в заказе
 				</ModalHeader>
 				<ModalBody>
-					{customer && (
-						<>
-							<form
-								className='flex flex-col gap-5'
-								onSubmit={handleSubmit(submit)}
-							>
-								<Input
-									label='Эл. почта'
-									type='email'
-									variant='bordered'
-									{...register('email', {
-										required: true,
-										value: customer.email,
-									})}
-								/>
+					<form className='flex flex-col gap-5' onSubmit={handleSubmit(submit)}>
+						<Input
+							label='Эл. почта'
+							type='email'
+							variant='bordered'
+							{...register('email', {
+								required: true,
+								value: customer.email,
+							})}
+						/>
 
-								<Input
-									label='Телефон'
-									type='phone'
-									variant='bordered'
-									{...register('phone', {
-										required: true,
-										value: customer.phone,
-									})}
-								/>
+						<Input
+							label='Телефон'
+							type='phone'
+							variant='bordered'
+							{...register('phone', {
+								required: true,
+								value: customer.phone,
+							})}
+						/>
 
-								<Input
-									label='Имя'
-									type='text'
-									variant='bordered'
-									placeholder={`${customer.firstName}`}
-									{...register('firstName', {
-										required: true,
-										value: customer.firstName,
-									})}
-								/>
+						<Input
+							label='Имя'
+							type='text'
+							variant='bordered'
+							placeholder={`${customer.firstName}`}
+							{...register('firstName', {
+								required: true,
+								value: customer.firstName,
+							})}
+						/>
 
-								<Input
-									label='Фамилия'
-									type='text'
-									variant='bordered'
-									{...register('lastName', {
-										required: true,
-										value: customer.lastName,
-									})}
-								/>
+						<Input
+							label='Фамилия'
+							type='text'
+							variant='bordered'
+							{...register('lastName', {
+								required: true,
+								value: customer.lastName,
+							})}
+						/>
 
-								<Button className='w-full' color='primary' type='submit'>
-									Обновить
-								</Button>
-							</form>
-						</>
-					)}
+						<Button className='w-full' color='primary' type='submit'>
+							Обновить
+						</Button>
+					</form>
 				</ModalBody>
 				<ModalFooter></ModalFooter>
 			</ModalContent>
