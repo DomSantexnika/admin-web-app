@@ -6,6 +6,7 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
+	useDisclosure,
 } from '@nextui-org/react'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
@@ -42,21 +43,47 @@ export function OrderPageItems({
 }: Props) {
 	const [itemEditModalData, setItemEditModalData] = useState<IOrderItem>()
 
-	const itemEditModalOpenRef = useRef()
-	const itemAddModalOpenRef = useRef()
+	const totalRef = useRef({
+		quantity: 0,
+		price: 0,
+		profit: 0,
+		cost: 0,
+	})
+
+	const setTotalValue = (
+		key: 'quantity' | 'price' | 'profit' | 'cost',
+		value: number
+	) => {
+		console.log(totalRef.current[key], value)
+		totalRef.current[key] += value
+
+		return value
+	}
+
+	const resetTotalValue = () => {
+		totalRef.current = {
+			quantity: 0,
+			price: 0,
+			profit: 0,
+			cost: 0,
+		}
+
+		return true
+	}
+
+	const itemEditModalControl = useDisclosure()
+	const itemAddModalControl = useDisclosure()
 
 	const onItemEditClick = (item: IOrderItem) => {
 		setItemEditModalData(item)
-		if (itemEditModalOpenRef?.current) itemEditModalOpenRef.current()
+		itemEditModalControl.onOpen()
 	}
 
 	return (
 		<div>
 			<div className='p-4 pb-0'>
 				<Button
-					onClick={() => {
-						if (itemEditModalOpenRef?.current) itemAddModalOpenRef.current()
-					}}
+					onClick={itemAddModalControl.onOpen}
 					startContent={<Plus size={15} />}
 				>
 					Добавить товар
@@ -76,6 +103,7 @@ export function OrderPageItems({
 				</TableHeader>
 				<TableBody>
 					{data &&
+						resetTotalValue() &&
 						data.map((item: IOrderItem) => (
 							<TableRow key={item.id}>
 								<TableCell>
@@ -89,12 +117,21 @@ export function OrderPageItems({
 								</TableCell>
 								<TableCell>ASD823</TableCell>
 								<TableCell>{item.product.name}</TableCell>
-								<TableCell>{item.product.price} руб.</TableCell>
-								<TableCell>{item.quantity} шт.</TableCell>
-								<TableCell>{item.price} руб.</TableCell>
-								<TableCell>{item.price * item.quantity} руб.</TableCell>
-								<TableCell>{item.price - item.product.price} руб.</TableCell>
 								<TableCell>
+									{setTotalValue('cost', item.product.price)} руб.
+								</TableCell>
+								<TableCell>
+									{setTotalValue('quantity', item.quantity)} шт.
+								</TableCell>
+								<TableCell>{item.price} руб.</TableCell>
+								<TableCell>
+									{setTotalValue('price', item.price * item.quantity)} руб.
+								</TableCell>
+								<TableCell>
+									{setTotalValue('profit', item.price - item.product.price)}
+									руб.
+								</TableCell>
+								<TableCell className='text-right'>
 									<Button
 										color='primary'
 										size='sm'
@@ -117,18 +154,39 @@ export function OrderPageItems({
 								</TableCell>
 							</TableRow>
 						))}
+					<TableRow>
+						<TableCell> </TableCell>
+						<TableCell> </TableCell>
+						<TableCell> </TableCell>
+						<TableCell className='font-bold'>
+							{totalRef.current.cost} руб.
+						</TableCell>
+						<TableCell className='font-bold'>
+							{totalRef.current.quantity} шт.
+						</TableCell>
+						<TableCell> </TableCell>
+						<TableCell className='font-bold'>
+							{totalRef.current.price} руб.
+						</TableCell>
+						<TableCell className='font-bold'>
+							{totalRef.current.profit} руб.
+						</TableCell>
+						<TableCell> </TableCell>
+					</TableRow>
 				</TableBody>
 			</Table>
 			<OrderItemEditModal
-				openRef={itemEditModalOpenRef}
+				stateControl={itemEditModalControl}
 				item={itemEditModalData}
 				onSubmit={data => {
+					itemEditModalControl.onClose()
 					onItemEdit(itemEditModalData!, data)
 				}}
 			/>
 			<OrderItemAddModal
-				openRef={itemAddModalOpenRef}
+				stateControl={itemAddModalControl}
 				onSubmit={dto => {
+					itemAddModalControl.onClose()
 					onItemAdd(dto)
 				}}
 			/>

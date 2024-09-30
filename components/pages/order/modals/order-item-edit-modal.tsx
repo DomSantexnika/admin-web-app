@@ -6,14 +6,13 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
-	useDisclosure,
 } from '@nextui-org/react'
 import Image from 'next/image'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 interface Props {
 	item: any
-	openRef: any
+	stateControl: any
 	onSubmit: (data: Inputs) => void
 }
 
@@ -22,22 +21,22 @@ type Inputs = {
 	price: number | undefined
 }
 
-export function OrderItemEditModal({ item, openRef, onSubmit }: Props) {
-	const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+export function OrderItemEditModal({ item, stateControl, onSubmit }: Props) {
 	const { register, handleSubmit } = useForm<Inputs>()
 
 	const submit: SubmitHandler<Inputs> = data => {
-		onClose()
 		onSubmit({
 			quantity: data?.quantity ? +data.quantity : undefined,
 			price: data?.price ? +data.price : undefined,
 		})
 	}
 
-	openRef.current = onOpen
-
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
+		<Modal
+			isOpen={stateControl.isOpen}
+			onOpenChange={stateControl.onOpenChange}
+			placement='top-center'
+		>
 			<ModalContent>
 				<ModalHeader className='flex flex-col gap-1'>
 					Обновить товар в заказе

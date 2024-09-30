@@ -292,7 +292,7 @@ export function OrderShowPage({ id }: Props) {
 					/>
 				</OrderPageBlock>
 				<OrderPageBlock name='Дополнительные услуги'>
-					<OrderPageServices orderId={data.id} />
+					<OrderPageServices items={data.services} />
 				</OrderPageBlock>
 				{data.histories.length && (
 					<OrderPageBlock name='История заказа'>

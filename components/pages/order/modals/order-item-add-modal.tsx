@@ -7,12 +7,11 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
-	useDisclosure,
 } from '@nextui-org/react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 interface Props {
-	openRef: any
+	stateControl: any
 	onSubmit: (data: Inputs) => void
 }
 
@@ -22,12 +21,10 @@ type Inputs = {
 	price?: number
 }
 
-export function OrderItemAddModal({ openRef, onSubmit }: Props) {
-	const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+export function OrderItemAddModal({ stateControl, onSubmit }: Props) {
 	const { register, handleSubmit, control } = useForm<Inputs>()
 
 	const submit: SubmitHandler<Inputs> = data => {
-		onClose()
 		onSubmit({
 			productId: +data.productId,
 			quantity: data?.quantity ? +data.quantity : undefined,
@@ -35,10 +32,12 @@ export function OrderItemAddModal({ openRef, onSubmit }: Props) {
 		})
 	}
 
-	openRef.current = onOpen
-
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
+		<Modal
+			isOpen={stateControl.isOpen}
+			onOpenChange={stateControl.onOpenChange}
+			placement='top-center'
+		>
 			<ModalContent>
 				<ModalHeader className='flex flex-col gap-1'>
 					Добавить товар
