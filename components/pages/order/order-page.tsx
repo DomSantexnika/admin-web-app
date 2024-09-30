@@ -7,16 +7,16 @@ import { Button, useDisclosure } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { OrderPageBlock } from './components/order-page-block'
+import { OrderPageCard } from './components/order-page-card'
+import { OrderPageHistory } from './components/order-page-history'
+import { IOrderItem, OrderPageItems } from './components/order-page-items'
+import { OrderPageServices } from './components/order-page-services'
 import { OrderAddressEditModal } from './modals/order-address-edit-modal'
 import { OrderCustomerEditModal } from './modals/order-customer-edit-modal'
 import { OrderDeliveryEditModal } from './modals/order-delivery-update-modal'
 import { OrderPaymentEditModal } from './modals/order-payment-edit-modal'
 import { OrderStatusEditModal } from './modals/order-status-edit-modal'
-import { OrderPageBlock } from './order-page-block'
-import { OrderPageCard } from './order-page-card'
-import { OrderPageHistory } from './order-page-history'
-import { IOrderItem, OrderPageItems } from './order-page-items'
-import { OrderPageServices } from './order-page-services'
 
 interface Props {
 	id: number
@@ -292,7 +292,12 @@ export function OrderShowPage({ id }: Props) {
 					/>
 				</OrderPageBlock>
 				<OrderPageBlock name='Дополнительные услуги'>
-					<OrderPageServices items={data.services} />
+					<OrderPageServices
+						onAdd={() => {}}
+						onEdit={() => {}}
+						onDelete={() => {}}
+						items={data.services}
+					/>
 				</OrderPageBlock>
 				{data.histories.length && (
 					<OrderPageBlock name='История заказа'>

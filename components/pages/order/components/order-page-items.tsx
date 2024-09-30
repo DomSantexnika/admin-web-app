@@ -11,8 +11,8 @@ import {
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
-import { OrderItemAddModal } from './modals/order-item-add-modal'
-import { OrderItemEditModal } from './modals/order-item-edit-modal'
+import { OrderItemAddModal } from '../modals/order-item-add-modal'
+import { OrderItemEditModal } from '../modals/order-item-edit-modal'
 
 export interface IOrderItem {
 	id: number
@@ -54,7 +54,6 @@ export function OrderPageItems({
 		key: 'quantity' | 'price' | 'profit' | 'cost',
 		value: number
 	) => {
-		console.log(totalRef.current[key], value)
 		totalRef.current[key] += value
 
 		return value
