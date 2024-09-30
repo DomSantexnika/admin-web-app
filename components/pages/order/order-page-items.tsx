@@ -7,7 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@nextui-org/react'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { OrderItemAddModal } from './modals/order-item-add-modal'
@@ -57,7 +57,7 @@ export function OrderPageItems({
 					onClick={() => {
 						if (itemEditModalOpenRef?.current) itemAddModalOpenRef.current()
 					}}
-					color='primary'
+					startContent={<Plus size={15} />}
 				>
 					Добавить товар
 				</Button>

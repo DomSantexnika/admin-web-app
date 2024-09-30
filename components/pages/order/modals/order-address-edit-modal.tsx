@@ -10,20 +10,24 @@ import {
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 type Inputs = {
-	email: string
-	phone: string
-	firstName: string
-	lastName: string
+	value: string
+	entry: string
+	floor: string
+	flat: string
 }
 
 interface Props {
-	customer: any
+	address: Inputs & {
+		city: {
+			name: string
+		}
+	}
 	stateControl: any
 	onSubmit: (data: Inputs) => void
 }
 
-export function OrderCustomerEditModal({
-	customer,
+export function OrderAddressEditModal({
+	address,
 	stateControl,
 	onSubmit,
 }: Props) {
@@ -41,50 +45,48 @@ export function OrderCustomerEditModal({
 		>
 			<ModalContent>
 				<ModalHeader className='flex flex-col gap-1'>
-					Изменить покупателя в заказе
+					Изменить адрес доставки
 				</ModalHeader>
 				<ModalBody>
 					<form className='flex flex-col gap-5' onSubmit={handleSubmit(submit)}>
+						<div>
+							Город доставки: <b>{address.city.name}</b>
+						</div>
 						<Input
-							label='Эл. почта'
-							type='email'
-							variant='bordered'
-							{...register('email', {
-								required: true,
-								value: customer.email,
-							})}
-						/>
-
-						<Input
-							label='Телефон'
-							type='phone'
-							variant='bordered'
-							{...register('phone', {
-								required: true,
-								value: customer.phone,
-							})}
-						/>
-
-						<Input
-							label='Имя'
+							label='Адрес'
 							type='text'
 							variant='bordered'
-							placeholder={`${customer.firstName}`}
-							{...register('firstName', {
+							{...register('value', {
 								required: true,
-								value: customer.firstName,
+								value: address.value,
 							})}
 						/>
-
-						<Input
-							label='Фамилия'
-							type='text'
-							variant='bordered'
-							{...register('lastName', {
-								required: true,
-								value: customer.lastName,
-							})}
-						/>
+						<div className='grid grid-cols-3 gap-2'>
+							<Input
+								label='Подъезд'
+								type='number'
+								variant='bordered'
+								{...register('entry', {
+									value: address.entry,
+								})}
+							/>
+							<Input
+								label='Этаж'
+								type='number'
+								variant='bordered'
+								{...register('floor', {
+									value: address.floor,
+								})}
+							/>
+							<Input
+								label='Кв'
+								type='number'
+								variant='bordered'
+								{...register('flat', {
+									value: address.flat,
+								})}
+							/>
+						</div>
 
 						<Button className='w-full' color='primary' type='submit'>
 							Обновить

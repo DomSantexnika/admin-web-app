@@ -1,7 +1,6 @@
 import axios from '@/lib/axios'
 import {
 	Button,
-	Checkbox,
 	Modal,
 	ModalBody,
 	ModalContent,
@@ -14,27 +13,26 @@ import { useQuery } from '@tanstack/react-query'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 type Inputs = {
-	statusId: number
-	notification: boolean
+	paymentMethodId: number
 }
 
 interface Props {
-	status: any
+	payment: any
 	stateControl: any
 	onSubmit: (data: Inputs) => void
 }
 
-export function OrderStatusEditModal({
-	status,
+export function OrderPaymentEditModal({
+	payment,
 	stateControl,
 	onSubmit,
 }: Props) {
-	const { register, handleSubmit, control } = useForm<Inputs>()
+	const { handleSubmit, control } = useForm<Inputs>()
 
 	const { data } = useQuery({
-		queryKey: ['order', 'status'],
+		queryKey: ['payment', 'methods'],
 		queryFn: async () => {
-			const response = await axios.get(`/orders/statuses`)
+			const response = await axios.get(`/payment/methods`)
 			return response.data
 		},
 	})
@@ -51,32 +49,29 @@ export function OrderStatusEditModal({
 		>
 			<ModalContent>
 				<ModalHeader className='flex flex-col gap-1'>
-					Изменить статус заказа
+					Изменить тип оплату
 				</ModalHeader>
 				<ModalBody>
 					<form className='flex flex-col gap-5' onSubmit={handleSubmit(submit)}>
 						<div>
-							Текший статус заказа: <b>{status.name}</b>
+							Текший тип оплаты: <b>{payment.name}</b>
 						</div>
 						<Controller
 							control={control}
-							name='statusId'
+							name='paymentMethodId'
 							render={({ field }) => (
 								<Select
-									label='Новый статус заказа'
+									label='Новый тип оплаты заказа'
 									variant='bordered'
 									items={data || []}
 									multiple={false}
-									defaultSelectedKeys={new Set([status.id])}
+									defaultSelectedKeys={new Set([payment.id])}
 									onSelectionChange={a => field.onChange(+[...a][0])}
 								>
 									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
 								</Select>
 							)}
 						/>
-						<Checkbox {...register('notification')}>
-							Отправить уведомления
-						</Checkbox>
 						<Button className='w-full' color='primary' type='submit'>
 							Обновить
 						</Button>

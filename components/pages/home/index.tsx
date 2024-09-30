@@ -26,12 +26,21 @@ export function HomePage() {
 				<div className='mt-6 gap-6 flex flex-col w-full'>
 					<div className='flex flex-col gap-2'>
 						<h3 className='text-xl font-semibold'>Продажа</h3>
-						<div className='grid md:grid-cols-2 grid-cols-1 2xl:grid-cols-3 gap-5  justify-center w-full'>
+						<div className='grid md:grid-cols-2 grid-cols-1 2xl:grid-cols-4 gap-5  justify-center w-full'>
+							<StatCard />
 							<StatCard />
 							<StatCard />
 							<StatCard />
 						</div>
 					</div>
+
+					<div className='h-full flex flex-col gap-2'>
+						<h3 className='text-xl font-semibold'>Статистика заказов</h3>
+						<div className='w-full bg-default-50 shadow-lg rounded-2xl p-6 '>
+							<Chart />
+						</div>
+					</div>
+
 					<div className='flex flex-col justify-center w-full py-5 px-4 lg:px-0  max-w-[90rem] mx-auto gap-3'>
 						<div className='flex  flex-wrap justify-between'>
 							<h3 className='text-center text-xl font-semibold'>
@@ -47,12 +56,6 @@ export function HomePage() {
 							</Link>
 						</div>
 						<OrderTable data={data?.data} />
-					</div>
-					<div className='h-full flex flex-col gap-2'>
-						<h3 className='text-xl font-semibold'>Статистика заказов</h3>
-						<div className='w-full bg-default-50 shadow-lg rounded-2xl p-6 '>
-							<Chart />
-						</div>
 					</div>
 				</div>
 			</div>

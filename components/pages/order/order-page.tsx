@@ -3,10 +3,14 @@
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import axios from '@/lib/axios'
 import { time } from '@/lib/time'
-import { Button } from '@nextui-org/react'
+import { Button, useDisclosure } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { useRef, useState } from 'react'
+import { Pencil } from 'lucide-react'
+import { useState } from 'react'
+import { OrderAddressEditModal } from './modals/order-address-edit-modal'
 import { OrderCustomerEditModal } from './modals/order-customer-edit-modal'
+import { OrderDeliveryEditModal } from './modals/order-delivery-update-modal'
+import { OrderPaymentEditModal } from './modals/order-payment-edit-modal'
 import { OrderStatusEditModal } from './modals/order-status-edit-modal'
 import { OrderPageBlock } from './order-page-block'
 import { OrderPageCard } from './order-page-card'
@@ -29,14 +33,18 @@ export function OrderShowPage({ id }: Props) {
 
 	const [isLoading, setIsLoading] = useState(false)
 
-	const customerEditModalOpenRef = useRef()
-	const orderStatusEditModalOpenRef = useRef()
+	const customerEditModalControl = useDisclosure()
+	const statusEditModalControl = useDisclosure()
+	const paymentEditModalControl = useDisclosure()
+	const deliveryEditModalControl = useDisclosure()
+	const addressEditModalControl = useDisclosure()
 
 	if (!data) {
 		return <LoadingOverlay />
 	}
 
 	const onStatusEdit = (dto: any) => {
+		statusEditModalControl.onClose()
 		setIsLoading(true)
 		axios
 			.put(`/orders/${data.id}/status`, dto)
@@ -44,6 +52,45 @@ export function OrderShowPage({ id }: Props) {
 			.finally(() => {
 				setTimeout(() => setIsLoading(false), 1000)
 			})
+	}
+
+	const onCustomerEdit = (dto: any) => {
+		customerEditModalControl.onClose()
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/customer`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
+	}
+
+	const onDeliveryEdit = (dto: any) => {
+		customerEditModalControl.onClose()
+		axios
+			.put(`/orders/${data.id}/delivery`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
+	}
+
+	const onAddressEdit = (dto: any) => {
+		addressEditModalControl.onClose()
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/address`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
+	}
+
+	const onPaymentEdit = (dto: any) => {
+		paymentEditModalControl.onClose()
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/payment`, dto)
+			.then(() => refetch())
+			.catch(err => console.error(err))
+			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
 	const onItemDelete = (item: IOrderItem) => {
@@ -74,15 +121,6 @@ export function OrderShowPage({ id }: Props) {
 			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
-	const onCustomerEdit = (dto: any) => {
-		setIsLoading(true)
-		axios
-			.put(`/orders/${data.id}/customer`, dto)
-			.then(() => refetch())
-			.catch(err => console.error(err))
-			.finally(() => setTimeout(() => setIsLoading(false), 1000))
-	}
-
 	return (
 		<div>
 			<div>
@@ -107,16 +145,20 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
-						<OrderStatusEditModal
-							status={data.status}
-							onSubmit={onStatusEdit}
-							openRef={orderStatusEditModalOpenRef}
-						/>
-						<div className='p-5 border-t-1 mt-auto'>
-							<Button onClick={orderStatusEditModalOpenRef.current}>
+
+						<div className='p-5 border-t-1 border-gray-600 mt-auto'>
+							<Button
+								startContent={<Pencil size={15} />}
+								onClick={statusEditModalControl.onOpen}
+							>
 								Изменить статус
 							</Button>
 						</div>
+						<OrderStatusEditModal
+							status={data.status}
+							onSubmit={onStatusEdit}
+							stateControl={statusEditModalControl}
+						/>
 					</OrderPageBlock>
 					<OrderPageBlock name='Оплата'>
 						<OrderPageCard
@@ -131,8 +173,18 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
-						<div className='p-5 border-t-1 mt-auto'>
-							<Button>Редактировать</Button>
+						<div className='p-5 border-t-1 border-gray-600 mt-auto'>
+							<Button
+								onClick={paymentEditModalControl.onOpen}
+								startContent={<Pencil size={15} />}
+							>
+								Редактировать
+							</Button>
+							<OrderPaymentEditModal
+								payment={data.paymentMethod}
+								onSubmit={onPaymentEdit}
+								stateControl={paymentEditModalControl}
+							/>
 						</div>
 					</OrderPageBlock>
 					<OrderPageBlock name='Покупатель'>
@@ -154,8 +206,17 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
+
+						<div className='p-5 border-t-1 border-gray-600 mt-auto'>
+							<Button
+								startContent={<Pencil size={15} />}
+								onClick={customerEditModalControl.onOpen}
+							>
+								Редактировать
+							</Button>
+						</div>
 						<OrderCustomerEditModal
-							openRef={customerEditModalOpenRef}
+							stateControl={customerEditModalControl}
 							customer={{
 								email: data.customerEmail,
 								phone: data.customerPhone,
@@ -164,11 +225,6 @@ export function OrderShowPage({ id }: Props) {
 							}}
 							onSubmit={onCustomerEdit}
 						/>
-						<div className='p-5 border-t-1 mt-auto'>
-							<Button onClick={customerEditModalOpenRef.current}>
-								Редактировать
-							</Button>
-						</div>
 					</OrderPageBlock>
 
 					<OrderPageBlock name='Доставка'>
@@ -193,9 +249,38 @@ export function OrderShowPage({ id }: Props) {
 								},
 							]}
 						/>
-						<div className='p-5 border-t-1 mt-auto'>
-							<Button>Редактировать</Button>
+						<div className='flex gap-5 p-5 border-t-1 border-gray-600 mt-auto'>
+							<Button
+								onClick={deliveryEditModalControl.onOpen}
+								startContent={<Pencil size={15} />}
+							>
+								Редактировать
+							</Button>
+							<Button
+								onClick={addressEditModalControl.onOpen}
+								startContent={<Pencil size={15} />}
+							>
+								Изменить адрес доставки
+							</Button>
 						</div>
+						<OrderDeliveryEditModal
+							delivery={data.deliveryMethod[0]}
+							onSubmit={onDeliveryEdit}
+							stateControl={deliveryEditModalControl}
+						/>
+						<OrderAddressEditModal
+							address={{
+								city: {
+									name: data.deliveryCity,
+								},
+								value: data.addressValue,
+								entry: data.addressEntry,
+								floor: data.addressFloor,
+								flat: data.addressFlat,
+							}}
+							onSubmit={onAddressEdit}
+							stateControl={addressEditModalControl}
+						/>
 					</OrderPageBlock>
 				</div>
 				<OrderPageBlock name='Товары в заказе'>
