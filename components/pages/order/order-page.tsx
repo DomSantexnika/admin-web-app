@@ -7,6 +7,7 @@ import { Button, useDisclosure } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { OrderPageBlock } from './components/order-page-block'
 import { OrderPageCard } from './components/order-page-card'
 import { OrderPageHistory } from './components/order-page-history'
@@ -93,6 +94,36 @@ export function OrderShowPage({ id }: Props) {
 			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
+	const onServiceDelete = (data: { id: number }) => {
+		setIsLoading(true)
+		axios
+			.delete(`/orders/${data.id}/services/${data.id}`)
+			.then(() => refetch())
+			.finally(() => {
+				setTimeout(() => setIsLoading(false), 1000)
+			})
+	}
+
+	const onServiceEdit = (item: { id: any }, dto) => {
+		setIsLoading(true)
+		axios
+			.put(`/orders/${data.id}/services/${item.id}`, dto)
+			.then(() => refetch())
+			.finally(() => {
+				setTimeout(() => setIsLoading(false), 1000)
+			})
+	}
+
+	const onServiceAdd = dto => {
+		setIsLoading(true)
+		axios
+			.post(`/orders/${data.id}/services`, dto)
+			.then(() => refetch())
+			.finally(() => {
+				setTimeout(() => setIsLoading(false), 1000)
+			})
+	}
+
 	const onItemDelete = (item: IOrderItem) => {
 		setIsLoading(true)
 		axios
@@ -116,8 +147,18 @@ export function OrderShowPage({ id }: Props) {
 		setIsLoading(true)
 		axios
 			.post(`/orders/${data.id}/items`, dto)
-			.then(() => refetch())
-			.catch(err => console.error(err))
+			.then(() => {
+				toast.success('Товар добавлено')
+				refetch()
+			})
+			.catch(err => {
+				toast.error(
+					err.response.data.message ||
+						err.message ||
+						'Ошибка при добавления сервиса'
+				)
+				console.error(err)
+			})
 			.finally(() => setTimeout(() => setIsLoading(false), 1000))
 	}
 
@@ -142,6 +183,10 @@ export function OrderShowPage({ id }: Props) {
 								{
 									name: 'Создан',
 									value: time(data.createdAt).calendar(),
+								},
+								{
+									name: 'Обновлено',
+									value: time(data.updatedAt).calendar(),
 								},
 							]}
 						/>
@@ -169,7 +214,7 @@ export function OrderShowPage({ id }: Props) {
 								},
 								{
 									name: 'К оплате',
-									value: data.totalPrice,
+									value: `${data.totalPrice} руб.`,
 								},
 							]}
 						/>
@@ -293,9 +338,9 @@ export function OrderShowPage({ id }: Props) {
 				</OrderPageBlock>
 				<OrderPageBlock name='Дополнительные услуги'>
 					<OrderPageServices
-						onAdd={() => {}}
-						onEdit={() => {}}
-						onDelete={() => {}}
+						onAdd={onServiceAdd}
+						onEdit={onServiceEdit}
+						onDelete={onServiceDelete}
 						items={data.services}
 					/>
 				</OrderPageBlock>

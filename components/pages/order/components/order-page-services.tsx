@@ -16,7 +16,7 @@ import { OrderServiceEditModal } from '../modals/order-service-edit-modal'
 interface Props {
 	items: any[]
 	onDelete: (item: any) => void
-	onEdit: (item: any, data: Record<string, any>) => void
+	onEdit: (item: any, dto: Record<string, any>) => void
 	onAdd: (dto: any) => void
 }
 
@@ -77,11 +77,20 @@ export function OrderPageServices({ items, onDelete, onEdit, onAdd }: Props) {
 					))}
 				</TableBody>
 			</Table>
-			<OrderServiceAddModal stateControl={addModalControl} onSubmit={onAdd} />
+			<OrderServiceAddModal
+				stateControl={addModalControl}
+				onSubmit={data => {
+					addModalControl.onClose()
+					onAdd(data)
+				}}
+			/>
 			<OrderServiceEditModal
 				item={editModalData}
 				stateControl={editModalControl}
-				onSubmit={onEdit}
+				onSubmit={data => {
+					editModalControl.onClose()
+					onEdit(editModalData, data)
+				}}
 			/>
 		</div>
 	)

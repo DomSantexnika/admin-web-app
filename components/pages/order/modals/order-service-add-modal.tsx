@@ -56,6 +56,9 @@ export function OrderServiceAddModal({ stateControl, onSubmit }: Props) {
 						<Controller
 							name='serviceId'
 							control={control}
+							rules={{
+								required: true,
+							}}
 							render={({ field, fieldState }) => (
 								<Select
 									label='Сервис'
@@ -63,6 +66,7 @@ export function OrderServiceAddModal({ stateControl, onSubmit }: Props) {
 									items={servicesFetch.data || []}
 									multiple={false}
 									onSelectionChange={a => field.onChange(+[...a][0])}
+									errorMessage={fieldState.error?.message}
 								>
 									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
 								</Select>
