@@ -3,9 +3,9 @@
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import axios from '@/lib/axios'
 import { time } from '@/lib/time'
-import { Button, useDisclosure } from '@nextui-org/react'
+import { Button, Link, useDisclosure } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { Pencil } from 'lucide-react'
+import { Pencil, Printer } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { OrderPageBlock } from './components/order-page-block'
@@ -164,8 +164,16 @@ export function OrderShowPage({ id }: Props) {
 
 	return (
 		<div>
-			<div>
-				<h3 className='text-xl font-semibold mb-6'>Заказ: {data.code}</h3>
+			<div className='flex gap-5 items-center mb-6'>
+				<h3 className='text-xl font-semibold'>Заказ: {data.code}</h3>
+				<div>
+					<Link
+						href={`http://localhost:8080/orders/${data.id}/pdf`}
+						target='_blank'
+					>
+						<Printer />
+					</Link>
+				</div>
 			</div>
 			<div className='flex flex-col gap-10'>
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
