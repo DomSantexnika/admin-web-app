@@ -1,9 +1,8 @@
 'use client'
 
 import axios from '@/lib/axios'
-import { Button } from '@nextui-org/react'
+import { Button, Link } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { ProductCreateModal } from './product-create-modal'
 import ProductTable from './product-table'
 
 export default function ProductsPage() {
@@ -17,7 +16,9 @@ export default function ProductsPage() {
 			<h3 className='text-xl font-semibold'>Товары</h3>
 			<div className='flex justify-between flex-wrap gap-4 items-center'>
 				<div className='flex flex-row gap-3.5 flex-wrap'>
-					<ProductCreateModal />
+					<Button color='primary' as={Link} href='/products/create'>
+						Новый товар
+					</Button>
 					<Button color='primary'>Импорт</Button>
 					<Button color='primary'>Экспорт</Button>
 				</div>

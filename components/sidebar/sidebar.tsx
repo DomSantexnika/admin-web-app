@@ -4,6 +4,7 @@ import { ExternalLink, Info, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback } from 'react'
+import { HomeIcon } from '../icons/sidebar/home-icon'
 import { useSidebarContext } from '../layout/layout-context'
 import Logo from '../shared/logo'
 import { DarkModeSwitchButton } from '../ui/darkmode-switch-button'
@@ -40,6 +41,13 @@ export const SidebarWrapper = () => {
 				<div className='flex flex-col justify-between h-full'>
 					<div className={Sidebar.Body()}>
 						<SidebarMenu title=''>
+							<SidebarItem
+								key='/'
+								isActive={pathname.length < 2}
+								href='/'
+								title='Главная'
+								icon={<HomeIcon />}
+							/>
 							{menuConfig.sidebar.map(item => (
 								<SidebarItem
 									key={item.href}

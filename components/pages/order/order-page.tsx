@@ -168,6 +168,7 @@ export function OrderShowPage({ id }: Props) {
 				<h3 className='text-xl font-semibold'>Заказ: {data.code}</h3>
 				<div>
 					<Link
+						isExternal
 						href={`http://localhost:8080/orders/${data.id}/pdf`}
 						target='_blank'
 					>
