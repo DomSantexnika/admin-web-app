@@ -1,6 +1,6 @@
 import { deleteAuthCookie } from '@/actions/auth.action'
 import { menuConfig } from '@/config/menu'
-import { ExternalLink, Info, LogOut } from 'lucide-react'
+import { Link as UILink } from '@nextui-org/react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback } from 'react'
@@ -67,22 +67,18 @@ export const SidebarWrapper = () => {
 							<span>Темный режим</span>
 							<DarkModeSwitchButton />
 						</div>
-						<a
+						<UILink
+							isExternal
+							color='foreground'
 							href='https://localhost:3000'
 							target='_blank'
-							className='flex items-center gap-2 underline'
 						>
-							<ExternalLink />
 							Интернет-магазин
-						</a>
-						<div className='flex items-center gap-2'>
-							<Info />
-							Версия: 1.0.0
-						</div>
-						<div className='flex items-center gap-2' onClick={handleLogout}>
-							<LogOut />
+						</UILink>
+						<UILink color='danger' href='#' onClick={handleLogout}>
 							Выйти
-						</div>
+						</UILink>
+						<div className='flex items-center gap-2 text-sm'>Версия: 1.0.0</div>
 					</div>
 				</div>
 			</div>
