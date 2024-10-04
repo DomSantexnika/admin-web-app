@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react'
-import { Plus, Star, StarOff, Trash2, X } from 'lucide-react'
+import { Plus, Star, StarOff, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
@@ -17,15 +17,31 @@ interface Props {
 export function ImagePicker({ onChange }: Props) {
 	const [items, setItems] = useState<Item[]>([])
 
+	let lastMainImageIndex: number | null = null
+
+	const setMainImage = (index: number) => {
+		items[lastMainImageIndex || 0].isMain = false
+		lastMainImageIndex = index
+		items[lastMainImageIndex].isMain = true
+		setItems([...items])
+	}
+
 	const onFileInputChange = (event: any) => {
+		const prevArray = items
+
 		const newArray = [
-			...items,
+			...prevArray,
 			...Array.from(event.target.files, (i: Blob) => ({
 				src: URL.createObjectURL(i),
 				isMain: false,
 				file: i,
 			})),
 		]
+
+		if (prevArray.length < 1) {
+			lastMainImageIndex = 0
+			newArray[lastMainImageIndex].isMain = true
+		}
 
 		setItems(newArray)
 		onChange(newArray)
@@ -69,7 +85,13 @@ export function ImagePicker({ onChange }: Props) {
 										{item.isMain ? (
 											<Star size={20} className='m-auto' />
 										) : (
-											<StarOff size={20} className='m-auto' />
+											<StarOff
+												size={20}
+												className='m-auto'
+												onClick={() => {
+													setMainImage(index)
+												}}
+											/>
 										)}
 									</div>
 									<div
@@ -80,7 +102,7 @@ export function ImagePicker({ onChange }: Props) {
 											onChange(items)
 										}}
 									>
-										<X size={20} className='m-auto' />
+										<Trash2 size={20} className='m-auto' />
 									</div>
 								</div>
 								<PhotoView src={item.src} key={item.src}>

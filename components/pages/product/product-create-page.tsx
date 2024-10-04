@@ -169,10 +169,7 @@ export function ProductCreatePage() {
 							control={control}
 							render={({ field }) => (
 								<ImagePicker
-									onChange={a => {
-										console.log(a)
-										field.onChange(Array.from(a, b => b.file))
-									}}
+									onChange={a => field.onChange(Array.from(a, b => b.file))}
 								/>
 							)}
 						/>

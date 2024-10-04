@@ -35,7 +35,10 @@ export const SidebarWrapper = () => {
 			>
 				<div className={Sidebar.Header()}>
 					<Link href='/' className='block'>
-						<Logo className='w-full' color='#fff' />
+						<div className='inline-block mx-auto'>
+							<Logo className='w-full' color='#fff' />
+							<div className=' text-sm'>Панель-управления</div>
+						</div>
 					</Link>
 				</div>
 				<div className='flex flex-col justify-between h-full'>
