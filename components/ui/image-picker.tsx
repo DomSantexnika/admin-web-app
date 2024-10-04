@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react'
-import { Plus, Star, StarOff, X } from 'lucide-react'
+import { Plus, Star, StarOff, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
@@ -33,16 +33,31 @@ export function ImagePicker({ onChange }: Props) {
 
 	return (
 		<div>
-			<div className='mb-5'>
+			<div className='mb-5 flex gap-4'>
 				<Button as='label' startContent={<Plus />}>
 					<input
 						type='file'
 						multiple
 						onChange={onFileInputChange}
 						className='hidden'
+						accept='image/png,image/webp,image/jpeg,image/jpg'
 					/>
 					Добавить картинку
 				</Button>
+				{!!items.length && (
+					<Button
+						onClick={() => {
+							if (window.confirm('Вы уверены?')) {
+								setItems([])
+								onChange([])
+							}
+						}}
+						color='danger'
+						startContent={<Trash2 />}
+					>
+						Очистить
+					</Button>
+				)}
 			</div>
 			<div className='grid grid-cols-6 gap-2'>
 				<PhotoProvider>

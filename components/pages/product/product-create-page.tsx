@@ -2,12 +2,12 @@
 
 import { ImagePicker } from '@/components/ui/image-picker'
 import axios from '@/lib/axios'
-import { Input, Select, SelectItem } from '@nextui-org/react'
+import { Button, Input, Select, SelectItem } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Check, X } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 type Inputs = {
 	categoryId: number
@@ -15,6 +15,8 @@ type Inputs = {
 	collectionId: number
 	article: string
 	name: string
+	slug: string
+	images: Blob[]
 }
 
 export function ProductCreatePage() {
@@ -34,11 +36,20 @@ export function ProductCreatePage() {
 		},
 	})
 
-	const { control } = useForm<Inputs>()
+	const {
+		control,
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<Inputs>()
 
 	const [articleIsValid, setArticleIsValid] = useState<
 		'nr' | 'valid' | 'invalid'
 	>('nr')
+
+	const onSubmit: SubmitHandler<Inputs> = data => {
+		console.log(data)
+	}
 
 	return (
 		<div>
@@ -46,7 +57,7 @@ export function ProductCreatePage() {
 				<h3 className='text-xl font-semibold'>Добавить товар</h3>
 			</div>
 			<div>
-				<form className='flex flex-col gap-5'>
+				<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
 					<div className='grid grid-cols-3 gap-4'>
 						<Controller
 							name='categoryId'
@@ -68,7 +79,7 @@ export function ProductCreatePage() {
 							)}
 						/>
 						<Controller
-							name='categoryId'
+							name='brandId'
 							control={control}
 							rules={{
 								required: true,
@@ -102,11 +113,8 @@ export function ProductCreatePage() {
 							)}
 						/>
 						<Controller
-							name='categoryId'
+							name='collectionId'
 							control={control}
-							rules={{
-								required: true,
-							}}
 							render={({ field, fieldState }) => (
 								<Select
 									label='Коллекция'
@@ -135,12 +143,44 @@ export function ProductCreatePage() {
 							}
 							variant='bordered'
 							label='Артикул'
+							{...register('article', {
+								required: true,
+							})}
+							errorMessage={errors.article?.message}
 						/>
-						<Input variant='bordered' label='Названия' />
-						<Input variant='bordered' label='Слуг' />
+						<Input
+							variant='bordered'
+							label='Названия'
+							{...register('name', {
+								required: true,
+							})}
+							errorMessage={errors.name?.message}
+						/>
+						<Input
+							variant='bordered'
+							label='Слуг'
+							{...register('slug')}
+							errorMessage={errors.slug?.message}
+						/>
 					</div>
 					<div>
-						<ImagePicker onChange={a => console.log(a)} />
+						<Controller
+							name='images'
+							control={control}
+							render={({ field }) => (
+								<ImagePicker
+									onChange={a => {
+										console.log(a)
+										field.onChange(Array.from(a, b => b.file))
+									}}
+								/>
+							)}
+						/>
+					</div>
+					<div>
+						<Button color='primary' type='submit'>
+							Добавить
+						</Button>
 					</div>
 				</form>
 			</div>
