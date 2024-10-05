@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import NextLink from 'next/link'
 import React from 'react'
-import { useSidebarContext } from '../layout/layout-context'
+import { useSidebarContext } from '../layout-context'
 
 interface Props {
 	title: string

@@ -16,6 +16,12 @@ const nextConfig = {
 				port: '',
 				pathname: '/static/**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'storage.bergatrading.ru',
+				port: '',
+				pathname: '/**',
+			},
 		],
 	},
 }

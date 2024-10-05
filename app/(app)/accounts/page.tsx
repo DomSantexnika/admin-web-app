@@ -1,8 +1,7 @@
-import React from "react";
-import { Accounts } from "@/components/accounts";
+import { AccountsPage } from '@/components/pages/account'
 
 const accounts = () => {
-  return <Accounts />;
-};
+	return <AccountsPage />
+}
 
-export default accounts;
+export default accounts

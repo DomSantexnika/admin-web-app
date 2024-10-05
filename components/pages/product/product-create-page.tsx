@@ -1,13 +1,16 @@
 'use client'
 
+import { LoadingOverlay } from '@/components/shared/loding-oerlay'
 import { ImagePicker } from '@/components/ui/image-picker'
 import axios from '@/lib/axios'
+import { imageService } from '@/services/image.service'
 import { Button, Input, Select, SelectItem } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Check, X } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 
 type Inputs = {
 	categoryId: number
@@ -16,7 +19,9 @@ type Inputs = {
 	article: string
 	name: string
 	slug: string
-	images: Blob[]
+	price: number
+	oldPrice: number
+	images: { isMain: boolean; file: Blob }[]
 }
 
 export function ProductCreatePage() {
@@ -43,12 +48,48 @@ export function ProductCreatePage() {
 		formState: { errors },
 	} = useForm<Inputs>()
 
+	const [isLoading, setIsLoading] = useState(false)
 	const [articleIsValid, setArticleIsValid] = useState<
 		'nr' | 'valid' | 'invalid'
 	>('nr')
 
-	const onSubmit: SubmitHandler<Inputs> = data => {
-		console.log(data)
+	const onSubmit: SubmitHandler<Inputs> = async data => {
+		setIsLoading(true)
+
+		try {
+			const payload = {
+				...data,
+				imageId: null,
+				imageIds: [],
+				price: +data.price,
+				oldPrice: data.oldPrice ? +data.oldPrice : null,
+			}
+
+			for (let i = 0; i < data.images.length; i++) {
+				const result = await imageService.create(data.images[i].file)
+
+				if (result) {
+					if (data.images[i].isMain) payload.imageId = result.id
+					else payload.imageIds.push(result.id)
+				}
+			}
+
+			delete payload.images
+
+			axios
+				.post('/products', payload)
+				.then(res => {
+					toast.success('Товар создан')
+					console.log(res)
+				})
+				.catch(err => {
+					toast.error('Ошибка при создания товара')
+					console.error(err)
+				})
+				.finally(() => setIsLoading(false))
+		} catch (err) {
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -163,13 +204,33 @@ export function ProductCreatePage() {
 							errorMessage={errors.slug?.message}
 						/>
 					</div>
+					<div className='grid grid-cols-3 gap-4'>
+						<Input
+							type='number'
+							variant='bordered'
+							label='Цена'
+							min={0}
+							{...register('price', {
+								required: true,
+							})}
+							errorMessage={errors.price?.message}
+						/>
+						<Input
+							type='number'
+							min={0}
+							variant='bordered'
+							label='Старая цена'
+							{...register('oldPrice')}
+							errorMessage={errors.oldPrice?.message}
+						/>
+					</div>
 					<div>
 						<Controller
 							name='images'
 							control={control}
 							render={({ field }) => (
 								<ImagePicker
-									onChange={a => field.onChange(Array.from(a, b => b.file))}
+									onChange={a => field.onChange(Array.from(a, b => b))}
 								/>
 							)}
 						/>
@@ -181,6 +242,7 @@ export function ProductCreatePage() {
 					</div>
 				</form>
 			</div>
+			{isLoading && <LoadingOverlay />}
 		</div>
 	)
 }

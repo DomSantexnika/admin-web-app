@@ -1,8 +1,8 @@
-import { Button } from '@nextui-org/react'
-import { Plus, Star, StarOff, Trash2 } from 'lucide-react'
+import { Star, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
+import { ImageInput } from './image-input'
 
 interface Item {
 	src: string
@@ -17,13 +17,32 @@ interface Props {
 export function ImagePicker({ onChange }: Props) {
 	const [items, setItems] = useState<Item[]>([])
 
-	let lastMainImageIndex: number | null = null
+	const getMainIndex = () => {
+		return items.findIndex(obj => {
+			return obj.isMain
+		})
+	}
+
+	const setItemsSync = (items: Item[]) => {
+		items.sort((a, b) => {
+			return a.isMain ? -1 : 1
+		})
+		setItems(items)
+		onChange(items)
+	}
 
 	const setMainImage = (index: number) => {
-		items[lastMainImageIndex || 0].isMain = false
-		lastMainImageIndex = index
-		items[lastMainImageIndex].isMain = true
-		setItems([...items])
+		const mainIndex = getMainIndex()
+
+		const newArray = [...items]
+
+		if (newArray[mainIndex]) {
+			newArray[mainIndex].isMain = false
+		}
+
+		newArray[index].isMain = true
+
+		setItemsSync(newArray)
 	}
 
 	const onFileInputChange = (event: any) => {
@@ -38,68 +57,46 @@ export function ImagePicker({ onChange }: Props) {
 			})),
 		]
 
-		if (prevArray.length < 1) {
-			lastMainImageIndex = 0
-			newArray[lastMainImageIndex].isMain = true
+		if (prevArray.length <= 0) {
+			newArray[0].isMain = true
 		}
 
-		setItems(newArray)
-		onChange(newArray)
+		setItemsSync(newArray)
 	}
 
 	return (
 		<div>
-			<div className='mb-5 flex gap-4'>
-				<Button as='label' startContent={<Plus />}>
-					<input
-						type='file'
-						multiple
-						onChange={onFileInputChange}
-						className='hidden'
-						accept='image/png,image/webp,image/jpeg,image/jpg'
-					/>
-					Добавить картинку
-				</Button>
-				{!!items.length && (
-					<Button
-						onClick={() => {
-							if (window.confirm('Вы уверены?')) {
-								setItems([])
-								onChange([])
-							}
-						}}
-						color='danger'
-						startContent={<Trash2 />}
-					>
-						Очистить
-					</Button>
-				)}
-			</div>
-			<div className='grid grid-cols-6 gap-2'>
+			<div className='grid grid-cols-6 gap-4 max-w-[90%]'>
 				<PhotoProvider>
 					{items.map((item, index) => {
 						return (
-							<div key={item.src} className='bg-white aspect-square relative'>
+							<div
+								key={item.src}
+								className={`bg-white aspect-square relative ${
+									item.isMain && 'col-span-2 row-span-2'
+								}`}
+							>
 								<div className='flex w-full justify-between absolute top-0 right-0'>
-									<div className='flex w-7 h-7 bg-black text-foreground cursor-pointer'>
-										{item.isMain ? (
-											<Star size={20} className='m-auto' />
-										) : (
-											<StarOff
+									{!item.isMain && (
+										<div className='flex w-7 h-7 bg-black text-foreground cursor-pointer'>
+											<Star
 												size={20}
 												className='m-auto'
 												onClick={() => {
 													setMainImage(index)
 												}}
 											/>
-										)}
-									</div>
+										</div>
+									)}
+
 									<div
-										className='flex w-7 h-7 bg-red-500 text-foreground cursor-pointer z-10'
+										className='flex w-7 h-7 bg-red-500 text-foreground cursor-pointer z-10 ml-auto'
 										onClick={() => {
 											items.splice(index, 1)
-											setItems([...items])
-											onChange(items)
+											if (items.length) {
+												setMainImage(0)
+											}
+											setItemsSync([...items])
 										}}
 									>
 										<Trash2 size={20} className='m-auto' />
@@ -111,10 +108,16 @@ export function ImagePicker({ onChange }: Props) {
 										className='object-contain w-full h-full p-2 cursor-pointer'
 									/>
 								</PhotoView>
+								{item.isMain && (
+									<div className='absolute text-sm bottom-0 w-full bg-primary p-2'>
+										Главная картинка
+									</div>
+								)}
 							</div>
 						)
 					})}
 				</PhotoProvider>
+				<ImageInput onChange={onFileInputChange} />
 			</div>
 		</div>
 	)
