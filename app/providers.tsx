@@ -26,7 +26,12 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 			>
 				<QueryClientProvider client={queryClient}>
 					{children}
-					<ToastContainer position='top-center' theme='dark' />
+					<ToastContainer
+						autoClose={2000}
+						hideProgressBar
+						position='top-center'
+						theme='dark'
+					/>
 				</QueryClientProvider>
 			</NextThemesProvider>
 		</NextUIProvider>

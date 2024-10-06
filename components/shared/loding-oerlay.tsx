@@ -1,8 +1,16 @@
 import { Spinner } from '@nextui-org/react'
 
-export function LoadingOverlay() {
+interface Props {
+	fixed?: boolean
+}
+
+export function LoadingOverlay({ fixed = true }: Props) {
 	return (
-		<div className='fixed flex top-0 left-0 w-full h-full bg-black/80'>
+		<div
+			className={`${
+				fixed ? 'fixed' : 'absolute'
+			} flex top-0 left-0 w-full h-full bg-black/80 z-50`}
+		>
 			<Spinner size='lg' className='m-auto' />
 		</div>
 	)

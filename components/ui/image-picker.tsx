@@ -4,18 +4,29 @@ import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
 import { ImageInput } from './image-input'
 
-interface Item {
+export interface ImagePickerItem {
 	src: string
 	isMain: boolean
-	file: Blob
+	id?: number
+	imageId?: number
+	isServerMain?: boolean
+	file?: Blob
 }
 
 interface Props {
-	onChange: (a: Item[]) => void
+	onChange: (items: ImagePickerItem[]) => void
+	defaultValue?: ImagePickerItem[]
+	onDelete?: (item: ImagePickerItem) => void
+	onChangeMain?: (item: ImagePickerItem) => void
 }
 
-export function ImagePicker({ onChange }: Props) {
-	const [items, setItems] = useState<Item[]>([])
+export function ImagePicker({
+	onChange,
+	defaultValue,
+	onDelete,
+	onChangeMain,
+}: Props) {
+	const [items, setItems] = useState<ImagePickerItem[]>(defaultValue || [])
 
 	const getMainIndex = () => {
 		return items.findIndex(obj => {
@@ -23,10 +34,13 @@ export function ImagePicker({ onChange }: Props) {
 		})
 	}
 
-	const setItemsSync = (items: Item[]) => {
-		items.sort((a, b) => {
-			return a.isMain ? -1 : 1
-		})
+	const setItemsSync = (items: ImagePickerItem[], sort: boolean = true) => {
+		if (sort) {
+			items.sort((a, b) => {
+				return a.isMain ? -1 : 1
+			})
+		}
+
 		setItems(items)
 		onChange(items)
 	}
@@ -41,6 +55,8 @@ export function ImagePicker({ onChange }: Props) {
 		}
 
 		newArray[index].isMain = true
+
+		if (onChangeMain) onChangeMain(newArray[index])
 
 		setItemsSync(newArray)
 	}
@@ -59,28 +75,42 @@ export function ImagePicker({ onChange }: Props) {
 
 		if (prevArray.length <= 0) {
 			newArray[0].isMain = true
+			setItemsSync(newArray)
+		} else {
+			setItemsSync(newArray, false)
 		}
+	}
 
-		setItemsSync(newArray)
+	const onDeleteClick = (index: number) => {
+		const item = items[index]
+
+		items.splice(index, 1)
+		if (items.length) {
+			setMainImage(0)
+		}
+		setItemsSync([...items])
+
+		if (onDelete) onDelete(item)
 	}
 
 	return (
-		<div>
-			<div className='grid grid-cols-6 gap-4 max-w-[90%]'>
+		<div className='relative'>
+			<div className='grid grid-cols-3 gap-2'>
 				<PhotoProvider>
 					{items.map((item, index) => {
+						console.log(item)
 						return (
 							<div
 								key={item.src}
 								className={`bg-white aspect-square relative ${
-									item.isMain && 'col-span-2 row-span-2'
+									item.isMain && 'col-span-2 row-span-2 border-5 border-primary'
 								}`}
 							>
-								<div className='flex w-full justify-between absolute top-0 right-0'>
+								<div className='flex w-full justify-between absolute top-0 right-0 p-1'>
 									{!item.isMain && (
-										<div className='flex w-7 h-7 bg-black text-foreground cursor-pointer'>
+										<div className='flex w-7 h-7 bg-primary text-foreground cursor-pointer rounded-md'>
 											<Star
-												size={20}
+												size={16}
 												className='m-auto'
 												onClick={() => {
 													setMainImage(index)
@@ -90,16 +120,10 @@ export function ImagePicker({ onChange }: Props) {
 									)}
 
 									<div
-										className='flex w-7 h-7 bg-red-500 text-foreground cursor-pointer z-10 ml-auto'
-										onClick={() => {
-											items.splice(index, 1)
-											if (items.length) {
-												setMainImage(0)
-											}
-											setItemsSync([...items])
-										}}
+										className='flex w-7 h-7 bg-red-500 text-foreground cursor-pointer z-10 ml-auto rounded-md'
+										onClick={() => onDeleteClick(index)}
 									>
-										<Trash2 size={20} className='m-auto' />
+										<Trash2 size={16} className='m-auto' />
 									</div>
 								</div>
 								<PhotoView src={item.src} key={item.src}>
@@ -108,11 +132,18 @@ export function ImagePicker({ onChange }: Props) {
 										className='object-contain w-full h-full p-2 cursor-pointer'
 									/>
 								</PhotoView>
-								{item.isMain && (
-									<div className='absolute text-sm bottom-0 w-full bg-primary p-2'>
-										Главная картинка
-									</div>
-								)}
+								<div
+									className={`absolute text-sm bottom-0 w-full p-2 flex justify-between font-bold ${
+										item.isMain ? 'bg-primary' : 'bg-default/80'
+									}`}
+								>
+									{item.isMain && <span>Главная картинка</span>}
+									{item.imageId ? (
+										<span>Идентификатор: {item.imageId}</span>
+									) : (
+										<span>{(item.file?.size / 1024).toFixed(2) + ' КБ'}</span>
+									)}
+								</div>
 							</div>
 						)
 					})}

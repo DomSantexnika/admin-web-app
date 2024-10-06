@@ -114,7 +114,7 @@ export function OrderPageItems({
 										className='object-contain w-16 h-16 bg-white p-1'
 									/>
 								</TableCell>
-								<TableCell>ASD823</TableCell>
+								<TableCell>{item.product.article}</TableCell>
 								<TableCell>{item.product.name}</TableCell>
 								<TableCell>
 									{setTotalValue('cost', item.product.price)} руб.

@@ -1,18 +1,18 @@
 'use client'
 
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
-import { ImagePicker } from '@/components/ui/image-picker'
+import { ImagePicker, ImagePickerItem } from '@/components/ui/image-picker'
 import axios from '@/lib/axios'
 import { imageService } from '@/services/image.service'
-import { Button, Input, Select, SelectItem } from '@nextui-org/react'
+import { Button, Input, Select, SelectItem, Spinner } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
-import { Check, X } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import slug from 'slug'
 
-type Inputs = {
+export type ProductCreateInputs = {
 	categoryId: number
 	brandId: number
 	collectionId: number
@@ -21,7 +21,16 @@ type Inputs = {
 	slug: string
 	price: number
 	oldPrice: number
-	images: { isMain: boolean; file: Blob }[]
+	stock: number
+	images: ImagePickerItem[]
+	cost: number
+	bonus: number
+
+	width: number
+	height: number
+	length: number
+	depth: number
+	weight: number
 }
 
 export function ProductCreatePage() {
@@ -41,19 +50,23 @@ export function ProductCreatePage() {
 		},
 	})
 
-	const {
-		control,
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<Inputs>()
+	const { control, register, handleSubmit, watch, formState, setValue } =
+		useForm<ProductCreateInputs>({
+			reValidateMode: 'onBlur',
+		})
+
+	const watchNameField = watch('name', '')
+
+	useEffect(() => {
+		setValue('slug', slug(watchNameField), { shouldValidate: true })
+	}, [setValue, watchNameField])
 
 	const [isLoading, setIsLoading] = useState(false)
-	const [articleIsValid, setArticleIsValid] = useState<
-		'nr' | 'valid' | 'invalid'
-	>('nr')
 
-	const onSubmit: SubmitHandler<Inputs> = async data => {
+	const [articleFieldLoading, setArticleFieldLoading] = useState(false)
+	const [slugFieldLoading, setSlugFieldLoading] = useState(false)
+
+	const onSubmit: SubmitHandler<ProductCreateInputs> = async data => {
 		setIsLoading(true)
 
 		try {
@@ -61,8 +74,6 @@ export function ProductCreatePage() {
 				...data,
 				imageId: null,
 				imageIds: [],
-				price: +data.price,
-				oldPrice: data.oldPrice ? +data.oldPrice : null,
 			}
 
 			for (let i = 0; i < data.images.length; i++) {
@@ -97,151 +108,292 @@ export function ProductCreatePage() {
 			<div className='mb-5'>
 				<h3 className='text-xl font-semibold'>Добавить товар</h3>
 			</div>
-			<div>
-				<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-					<div className='grid grid-cols-3 gap-4'>
-						<Controller
-							name='categoryId'
-							control={control}
-							rules={{
-								required: true,
-							}}
-							render={({ field, fieldState }) => (
-								<Select
-									label='Категория'
-									variant='bordered'
-									items={categoriesFetch.data || []}
-									multiple={false}
-									onSelectionChange={a => field.onChange(+[...a][0])}
-									errorMessage={fieldState.error?.message}
-								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
-								</Select>
-							)}
-						/>
-						<Controller
-							name='brandId'
-							control={control}
-							rules={{
-								required: true,
-							}}
-							render={({ field, fieldState }) => (
-								<Select
-									label='Производитель'
-									variant='bordered'
-									items={brandsFetch.data || []}
-									multiple={false}
-									onSelectionChange={a => field.onChange(+[...a][0])}
-									errorMessage={fieldState.error?.message}
-								>
-									{item => (
-										<SelectItem
-											startContent={
-												<Image
-													src={item.image.location}
-													width={50}
-													height={50}
-													alt=''
-													className='object-contain bg-white p-2'
-												/>
-											}
-											key={item.id}
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div className='lg:flex gap-5'>
+					<div className='lg:w-[50%]'>
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<Controller
+								name='categoryId'
+								control={control}
+								rules={{
+									required: true,
+								}}
+								render={({ field, fieldState }) => (
+									<Select
+										label='Категория'
+										variant='bordered'
+										items={categoriesFetch.data || []}
+										multiple={false}
+										onSelectionChange={a => field.onChange(+[...a][0])}
+										errorMessage={fieldState.error?.message}
+									>
+										{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+									</Select>
+								)}
+							/>
+							<div className='grid sm:grid-cols-2 gap-4'>
+								<Controller
+									name='brandId'
+									control={control}
+									rules={{
+										required: true,
+									}}
+									render={({ field, fieldState }) => (
+										<Select
+											label='Производитель'
+											variant='bordered'
+											items={brandsFetch.data || []}
+											multiple={false}
+											onSelectionChange={a => field.onChange(+[...a][0])}
+											errorMessage={fieldState.error?.message}
 										>
-											{item.name}
-										</SelectItem>
+											{item => (
+												<SelectItem
+													startContent={
+														<Image
+															src={item.image.location}
+															width={50}
+															height={50}
+															alt=''
+															className='object-contain bg-white p-2'
+														/>
+													}
+													key={item.id}
+												>
+													{item.name}
+												</SelectItem>
+											)}
+										</Select>
 									)}
-								</Select>
-							)}
-						/>
-						<Controller
-							name='collectionId'
-							control={control}
-							render={({ field, fieldState }) => (
-								<Select
-									label='Коллекция'
+								/>
+								<Controller
+									name='collectionId'
+									control={control}
+									render={({ field, fieldState }) => (
+										<Select
+											label='Коллекция'
+											variant={[].length ? 'bordered' : undefined}
+											items={[]}
+											multiple={false}
+											onSelectionChange={a => field.onChange(+[...a][0])}
+											errorMessage={fieldState.error?.message}
+											disabled
+											endContent={<Spinner size='sm' />}
+										>
+											{item => (
+												<SelectItem key={item.id}>{item.name}</SelectItem>
+											)}
+										</Select>
+									)}
+								/>
+							</div>
+						</section>
+
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<div className='grid gap-4'>
+								<Input
 									variant='bordered'
-									items={[]}
-									multiple={false}
-									onSelectionChange={a => field.onChange(+[...a][0])}
-									errorMessage={fieldState.error?.message}
-									disabled
-								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
-								</Select>
-							)}
-						/>
+									label='Названия'
+									{...register('name', {
+										required: true,
+									})}
+									errorMessage={formState.errors.name?.message}
+								/>
+								<Input
+									endContent={articleFieldLoading && <Spinner size='sm' />}
+									variant='bordered'
+									label='Артикул'
+									{...register('article', {
+										required: true,
+										validate: async value => {
+											if (!value) return 'Артикул обязательно для заполнения'
+											setArticleFieldLoading(true)
+											const result = await axios
+												.get(`/products/article/${value}`)
+												.catch(err => console.error(err))
+											setArticleFieldLoading(false)
+											return !result || 'Такой артикул уже существует'
+										},
+									})}
+									isInvalid={!!formState.errors.article?.message}
+									errorMessage={formState.errors.article?.message}
+								/>
+								<Controller
+									control={control}
+									name='slug'
+									render={({ field, fieldState }) => (
+										<Input
+											variant='bordered'
+											label='Слуг'
+											endContent={slugFieldLoading && <Spinner size='sm' />}
+											errorMessage={fieldState.error?.message}
+											isInvalid={!!fieldState.error?.message}
+											value={field.value}
+											onChange={field.onChange}
+											onBlur={() => {}}
+										/>
+									)}
+									rules={{
+										required: true,
+										validate: async value => {
+											if (!value) return 'Слуг обязательно для заполнения'
+											setSlugFieldLoading(true)
+											const result = await axios
+												.get(`/products/slug/${value}`)
+												.catch(err => console.error(err))
+											setSlugFieldLoading(false)
+											return !result || 'Такой слуг уже существует'
+										},
+									}}
+								/>
+							</div>
+						</section>
+
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<div className='grid md:grid-cols-3 gap-4'>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Цена'
+									endContent='₽'
+									{...register('price', {
+										required: true,
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.price?.message}
+								/>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Старая цена'
+									endContent='₽'
+									{...register('oldPrice', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={
+										formState.errors.oldPrice && errors.oldPrice?.message
+									}
+								/>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Закупочная цена'
+									endContent='₽'
+									{...register('cost', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.cost?.message}
+								/>
+							</div>
+						</section>
+
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<div className='grid md:grid-cols-2 gap-4'>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Количество'
+									endContent='штук'
+									{...register('stock', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.stock?.message}
+								/>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Бонус'
+									{...register('bonus', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.bonus?.message}
+								/>
+							</div>
+						</section>
+
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<div className='grid md:grid-cols-3 gap-4'>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Ширина'
+									endContent='см'
+									{...register('width', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.width?.message}
+								/>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Высота'
+									endContent='см'
+									{...register('height', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.height?.message}
+								/>
+								<Input
+									type='number'
+									variant='bordered'
+									label='Длина'
+									endContent='см'
+									{...register('length', {
+										valueAsNumber: true,
+										min: 0,
+									})}
+									errorMessage={formState.errors.length?.message}
+								/>
+								<div className='col-span-full grid md:grid-cols-2 gap-4'>
+									<Input
+										type='number'
+										variant='bordered'
+										label='Глубина'
+										endContent='см'
+										{...register('depth', {
+											valueAsNumber: true,
+											min: 0,
+										})}
+										errorMessage={formState.errors.depth?.message}
+									/>
+									<Input
+										type='number'
+										variant='bordered'
+										label='Вес'
+										endContent='гр'
+										{...register('weight', {
+											valueAsNumber: true,
+											min: 0,
+										})}
+										errorMessage={formState.errors.weight?.message}
+									/>
+								</div>
+							</div>
+						</section>
 					</div>
-					<div className='grid grid-cols-3 gap-4'>
-						<Input
-							endContent={
-								articleIsValid !== 'nr' ? (
-									articleIsValid === 'valid' ? (
-										<Check color='green' />
-									) : (
-										<X color='red' />
-									)
-								) : null
-							}
-							variant='bordered'
-							label='Артикул'
-							{...register('article', {
-								required: true,
-							})}
-							errorMessage={errors.article?.message}
-						/>
-						<Input
-							variant='bordered'
-							label='Названия'
-							{...register('name', {
-								required: true,
-							})}
-							errorMessage={errors.name?.message}
-						/>
-						<Input
-							variant='bordered'
-							label='Слуг'
-							{...register('slug')}
-							errorMessage={errors.slug?.message}
-						/>
-					</div>
-					<div className='grid grid-cols-3 gap-4'>
-						<Input
-							type='number'
-							variant='bordered'
-							label='Цена'
-							min={0}
-							{...register('price', {
-								required: true,
-							})}
-							errorMessage={errors.price?.message}
-						/>
-						<Input
-							type='number'
-							min={0}
-							variant='bordered'
-							label='Старая цена'
-							{...register('oldPrice')}
-							errorMessage={errors.oldPrice?.message}
-						/>
-					</div>
-					<div>
+					<div className='lg:w-[50%]'>
 						<Controller
 							name='images'
 							control={control}
 							render={({ field }) => (
-								<ImagePicker
-									onChange={a => field.onChange(Array.from(a, b => b))}
-								/>
+								<ImagePicker onChange={a => field.onChange(a)} />
 							)}
 						/>
 					</div>
-					<div>
-						<Button color='primary' type='submit'>
-							Добавить
-						</Button>
-					</div>
-				</form>
-			</div>
+				</div>
+				<div className='text-center mt-6'>
+					<Button color='primary' radius='sm' type='submit' className='w-[50%]'>
+						Добавить
+					</Button>
+				</div>
+			</form>
 			{isLoading && <LoadingOverlay />}
 		</div>
 	)

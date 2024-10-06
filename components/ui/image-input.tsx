@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { ImagePlus } from 'lucide-react'
 
 interface Props {
 	onChange: (a: any) => void
@@ -15,7 +15,7 @@ export function ImageInput({ onChange }: Props) {
 				onChange={onChange}
 			/>
 			<div className='m-auto flex flex-col items-center'>
-				<Plus size='30%' className='mb-2' />
+				<ImagePlus size='30%' className='mb-2' />
 				<span className='font-bold text-center'>Добавить картинку</span>
 			</div>
 		</label>

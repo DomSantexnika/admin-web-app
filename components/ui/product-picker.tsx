@@ -15,7 +15,7 @@ export default function ProductPicker({ onSelect }: Props) {
 		async load({ signal, filterText }) {
 			if (filterText) {
 				try {
-					let res = await axios.get(`/products/id/${filterText}`)
+					let res = await axios.get(`/products/article/${filterText}`)
 					return {
 						items: [res.data],
 					}
@@ -35,7 +35,7 @@ export default function ProductPicker({ onSelect }: Props) {
 				isLoading={list.isLoading}
 				items={list.items}
 				label='Выбрать товар'
-				placeholder='Введите ID товара'
+				placeholder='Введите артикул товара'
 				variant='bordered'
 				onInputChange={list.setFilterText}
 				onSelectionChange={(value: any) => {
@@ -75,10 +75,13 @@ export default function ProductPicker({ onSelect }: Props) {
 						alt=''
 					/>
 					<div className='w-full'>
-						<div className='font-bold mb-3'>{selectedItem.name}</div>
+						<div className='font-bold mb-1'>{selectedItem.name}</div>
 						<div className='flex justify-between'>
-							<div>{selectedItem.price} руб.</div>
-							<div>{selectedItem.stock} шт.</div>
+							<div>{selectedItem.article}</div>
+							<div className='flex gap-2'>
+								<div>{selectedItem.price} руб.</div>
+								<div>{selectedItem.stock} шт.</div>
+							</div>
 						</div>
 					</div>
 				</div>
