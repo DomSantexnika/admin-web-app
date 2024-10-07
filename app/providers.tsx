@@ -2,6 +2,7 @@
 
 import { NextUIProvider } from '@nextui-org/system'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { ThemeProviderProps } from 'next-themes/dist/types'
 import { ReactNode, useState } from 'react'
@@ -32,6 +33,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 						position='top-center'
 						theme='dark'
 					/>
+					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>
 			</NextThemesProvider>
 		</NextUIProvider>

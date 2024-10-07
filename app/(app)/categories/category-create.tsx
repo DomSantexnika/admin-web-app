@@ -1,5 +1,7 @@
 'use client'
 
+import { LoadingOverlay } from '@/components/shared/loding-oerlay'
+import axios from '@/lib/axios'
 import {
 	Button,
 	Input,
@@ -8,11 +10,66 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
+	Select,
+	SelectItem,
+	Spinner,
 	useDisclosure,
 } from '@nextui-org/react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import slug from 'slug'
 
-export const CategoryCreate = () => {
-	const { isOpen, onOpen, onOpenChange } = useDisclosure()
+interface CategoryCreateInputs {
+	parentId: number
+	name: string
+	slug: string
+}
+
+interface Props {
+	onSubmit: (data: any) => void
+}
+
+export const CategoryCreate = ({ onSubmit }: Props) => {
+	const categoriesFetch = useQuery({
+		queryKey: ['categories-select'],
+		queryFn: async () => {
+			const response = await axios.get(`/categories`)
+			return response.data
+		},
+	})
+
+	const [loading, setLoading] = useState(false)
+	const [slugFieldLoading, setSlugFieldLoading] = useState(false)
+	const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+
+	const { control, watch, register, setValue, formState, handleSubmit } =
+		useForm<CategoryCreateInputs>()
+
+	const watchNameField = watch('name', '')
+
+	useEffect(() => {
+		setValue('slug', slug(watchNameField), { shouldValidate: true })
+	}, [setValue, watchNameField])
+
+	const onSubmitFrom: SubmitHandler<CategoryCreateInputs> = payload => {
+		setLoading(true)
+		axios
+			.post('/categories', payload)
+			.then(res => {
+				toast.success('Категория создан')
+				console.log(res)
+				onClose()
+				categoriesFetch.refetch()
+				if (onSubmit) onSubmit(res)
+			})
+			.catch(err => {
+				toast.error('Ошибка при создания категории')
+				console.error(err)
+			})
+			.finally(() => setLoading(false))
+	}
 
 	return (
 		<div>
@@ -28,19 +85,75 @@ export const CategoryCreate = () => {
 					<ModalContent>
 						{onClose => (
 							<>
-								<ModalHeader className='flex flex-col gap-1'>
-									Новый категория
-								</ModalHeader>
+								<ModalHeader>Новый категория</ModalHeader>
 								<ModalBody>
-									<Input label='Названия' variant='bordered' />
-									<Input label='Слуг' variant='bordered' />
+									<form
+										onSubmit={handleSubmit(onSubmitFrom)}
+										className='flex flex-col gap-4'
+									>
+										<Input
+											label='Названия'
+											{...register('name', {
+												required: true,
+											})}
+											variant='bordered'
+											errorMessage={formState.errors.name?.message}
+											isInvalid={!!formState.errors.name?.message}
+										/>
+										<Controller
+											control={control}
+											name='slug'
+											rules={{
+												required: true,
+												validate: async value => {
+													if (!value) return 'Слуг обязательно для заполнения'
+													setSlugFieldLoading(true)
+													const result = await axios
+														.get(`/categories/slug/${value}`)
+														.catch(err => console.error(err))
+													setSlugFieldLoading(false)
+													return !result || 'Такой слуг уже существует'
+												},
+											}}
+											render={({ field, fieldState }) => (
+												<Input
+													endContent={slugFieldLoading && <Spinner size='sm' />}
+													errorMessage={fieldState.error?.message}
+													isInvalid={!!fieldState.error?.message}
+													onChange={field.onChange}
+													label='Слуг'
+													variant='bordered'
+													value={field.value}
+												/>
+											)}
+										/>
+										<Controller
+											name='parentId'
+											control={control}
+											render={({ field, fieldState }) => (
+												<Select
+													label='Родительский категория'
+													variant='bordered'
+													items={categoriesFetch.data || []}
+													multiple={false}
+													onSelectionChange={a => field.onChange(+[...a][0])}
+													errorMessage={fieldState.error?.message}
+												>
+													{item => (
+														<SelectItem key={item.id}>{item.name}</SelectItem>
+													)}
+												</Select>
+											)}
+										/>
+										<Button color='primary' type='submit'>
+											Создать
+										</Button>
+									</form>
+									{loading && <LoadingOverlay />}
 								</ModalBody>
 								<ModalFooter>
 									<Button color='danger' variant='flat' onClick={onClose}>
 										Закрыть
-									</Button>
-									<Button color='primary' onPress={onClose}>
-										Создать
 									</Button>
 								</ModalFooter>
 							</>

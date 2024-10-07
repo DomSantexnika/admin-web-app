@@ -6,7 +6,7 @@ import { CategoryCreate } from './category-create'
 import CategoryTable from './category-table'
 
 export default function CategoriesPage() {
-	const { data } = useQuery({
+	const { data, refetch } = useQuery({
 		queryKey: ['categories'],
 		queryFn: () => axios.get('/categories'),
 	})
@@ -16,7 +16,7 @@ export default function CategoriesPage() {
 			<h3 className='text-xl font-semibold'>Категории</h3>
 			<div className='flex justify-between flex-wrap gap-4 items-center'>
 				<div className='flex flex-row gap-3.5 flex-wrap'>
-					<CategoryCreate />
+					<CategoryCreate onSubmit={refetch} />
 				</div>
 			</div>
 
