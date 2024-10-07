@@ -2,11 +2,11 @@
 
 import axios from '@/lib/axios'
 import { useQuery } from '@tanstack/react-query'
-import { BrandCreate } from './brand-create'
+import { BrandCreateModal } from './brand-create-modal'
 import BrandTable from './brand-table'
 
 export default function BrandsPage() {
-	const { data } = useQuery({
+	const { data, refetch } = useQuery({
 		queryKey: ['brands'],
 		queryFn: () => axios.get('/brands'),
 	})
@@ -16,7 +16,7 @@ export default function BrandsPage() {
 			<h3 className='text-xl font-semibold'>Бренды</h3>
 			<div className='flex justify-between flex-wrap gap-4 items-center'>
 				<div className='flex flex-row gap-3.5 flex-wrap'>
-					<BrandCreate />
+					<BrandCreateModal onSubmit={refetch} />
 				</div>
 			</div>
 

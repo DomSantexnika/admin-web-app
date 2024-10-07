@@ -150,13 +150,15 @@ export function ProductCreatePage() {
 											{item => (
 												<SelectItem
 													startContent={
-														<Image
-															src={item.image.location}
-															width={50}
-															height={50}
-															alt=''
-															className='object-contain bg-white p-2'
-														/>
+														item.image && (
+															<Image
+																src={item.image.location}
+																width={50}
+																height={50}
+																alt=''
+																className='object-contain bg-white p-2'
+															/>
+														)
 													}
 													key={item.id}
 												>
@@ -272,9 +274,7 @@ export function ProductCreatePage() {
 										valueAsNumber: true,
 										min: 0,
 									})}
-									errorMessage={
-										formState.errors.oldPrice && errors.oldPrice?.message
-									}
+									errorMessage={formState.errors.oldPrice?.message}
 								/>
 								<Input
 									type='number'

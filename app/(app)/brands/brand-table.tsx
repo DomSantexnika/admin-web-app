@@ -35,13 +35,17 @@ export default function BrandTable({ data }: Props) {
 					data.map(item => (
 						<TableRow key={item.id}>
 							<TableCell>
-								<Image
-									src={item.image.location}
-									width={64}
-									height={64}
-									alt=''
-									className='object-contain w-16 h-16 bg-white p-1'
-								/>
+								{item.image ? (
+									<Image
+										src={item.image.location}
+										width={64}
+										height={64}
+										alt=''
+										className='object-contain w-16 h-16 bg-white p-1'
+									/>
+								) : (
+									<div className='w-[64px] h-[64px] bg-gray-300' />
+								)}
 							</TableCell>
 							<TableCell>{item.name}</TableCell>
 							<TableCell>

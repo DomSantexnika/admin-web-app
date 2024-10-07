@@ -1,7 +1,7 @@
 import axios from '@/lib/axios'
 
 class ImageService {
-	async create(file: any) {
+	async create(file: any): Promise<Record<string, any>> {
 		const formData = new FormData()
 		formData.append('file', file)
 
