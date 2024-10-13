@@ -1,6 +1,7 @@
 'use client'
 
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
+import AttributePicker from '@/components/ui/attribute-picker'
 import { ImagePicker, ImagePickerItem } from '@/components/ui/image-picker'
 import axios from '@/lib/axios'
 import { imageService } from '@/services/image.service'
@@ -31,6 +32,8 @@ export type ProductCreateInputs = {
 	length: number
 	depth: number
 	weight: number
+
+	attributes: { attributeId: number; valueId: number }[]
 }
 
 export function ProductCreatePage() {
@@ -379,13 +382,24 @@ export function ProductCreatePage() {
 						</section>
 					</div>
 					<div className='lg:w-[50%]'>
-						<Controller
-							name='images'
-							control={control}
-							render={({ field }) => (
-								<ImagePicker onChange={a => field.onChange(a)} />
-							)}
-						/>
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<Controller
+								name='images'
+								control={control}
+								render={({ field }) => (
+									<ImagePicker onChange={a => field.onChange(a)} />
+								)}
+							/>
+						</section>
+						<section className='flex flex-col gap-5 border-b-1 border-default pb-5 mb-5'>
+							<Controller
+								control={control}
+								name='attributes'
+								render={({ field }) => (
+									<AttributePicker onChange={value => field.onChange(value)} />
+								)}
+							/>
+						</section>
 					</div>
 				</div>
 				<div className='text-center mt-6'>
