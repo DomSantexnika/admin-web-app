@@ -104,7 +104,7 @@ export function OrderShowPage({ id }: Props) {
 			})
 	}
 
-	const onServiceEdit = (item: { id: any }, dto) => {
+	const onServiceEdit = (item: { id: any }, dto: any) => {
 		setIsLoading(true)
 		axios
 			.put(`/orders/${data.id}/services/${item.id}`, dto)
@@ -114,7 +114,7 @@ export function OrderShowPage({ id }: Props) {
 			})
 	}
 
-	const onServiceAdd = dto => {
+	const onServiceAdd = (dto: any) => {
 		setIsLoading(true)
 		axios
 			.post(`/orders/${data.id}/services`, dto)

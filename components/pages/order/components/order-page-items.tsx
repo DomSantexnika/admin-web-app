@@ -20,6 +20,7 @@ export interface IOrderItem {
 	quantity: number
 	product: {
 		id: number
+		article: string
 		name: string
 		price: number
 		image: {
@@ -101,7 +102,7 @@ export function OrderPageItems({
 					<TableColumn> </TableColumn>
 				</TableHeader>
 				<TableBody>
-					{data &&
+					{(data as any) &&
 						resetTotalValue() &&
 						data.map((item: IOrderItem) => (
 							<TableRow key={item.id}>

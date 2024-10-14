@@ -107,7 +107,7 @@ export const AttributeCreateModal = ({ onSubmit }: Props) => {
 											label='Группа'
 											items={groupsFetch.data}
 										>
-											{item => (
+											{(item: { id: number; name: string }) => (
 												<SelectItem key={item.id}>{item.name}</SelectItem>
 											)}
 										</Select>

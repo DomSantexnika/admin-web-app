@@ -118,9 +118,7 @@ export function ProductEditPage({ id }: Props) {
 										min: 0,
 										value: productFetch.data.oldPrice,
 									})}
-									errorMessage={
-										formState.errors.oldPrice && errors.oldPrice?.message
-									}
+									errorMessage={formState.errors.oldPrice?.message}
 								/>
 								<Input
 									type='number'

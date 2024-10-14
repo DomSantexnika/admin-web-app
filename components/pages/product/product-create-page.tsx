@@ -76,7 +76,7 @@ export function ProductCreatePage() {
 			const payload = {
 				...data,
 				imageId: null,
-				imageIds: [],
+				imageIds: [] as number[],
 			}
 
 			for (let i = 0; i < data.images.length; i++) {
@@ -88,7 +88,7 @@ export function ProductCreatePage() {
 				}
 			}
 
-			delete payload.images
+			payload.images = []
 
 			axios
 				.post('/products', payload)
@@ -127,10 +127,12 @@ export function ProductCreatePage() {
 										variant='bordered'
 										items={categoriesFetch.data || []}
 										multiple={false}
-										onSelectionChange={a => field.onChange(+[...a][0])}
+										onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 										errorMessage={fieldState.error?.message}
 									>
-										{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+										{(item: any) => (
+											<SelectItem key={item.id}>{item.name}</SelectItem>
+										)}
 									</Select>
 								)}
 							/>
@@ -147,10 +149,10 @@ export function ProductCreatePage() {
 											variant='bordered'
 											items={brandsFetch.data || []}
 											multiple={false}
-											onSelectionChange={a => field.onChange(+[...a][0])}
+											onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 											errorMessage={fieldState.error?.message}
 										>
-											{item => (
+											{(item: any) => (
 												<SelectItem
 													startContent={
 														item.image && (
@@ -180,12 +182,12 @@ export function ProductCreatePage() {
 											variant={[].length ? 'bordered' : undefined}
 											items={[]}
 											multiple={false}
-											onSelectionChange={a => field.onChange(+[...a][0])}
+											onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 											errorMessage={fieldState.error?.message}
 											disabled
 											endContent={<Spinner size='sm' />}
 										>
-											{item => (
+											{(item: any) => (
 												<SelectItem key={item.id}>{item.name}</SelectItem>
 											)}
 										</Select>

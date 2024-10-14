@@ -68,9 +68,11 @@ export function OrderStatusEditModal({
 									items={data || []}
 									multiple={false}
 									defaultSelectedKeys={new Set([status.id])}
-									onSelectionChange={a => field.onChange(+[...a][0])}
+									onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+									{(item: any) => (
+										<SelectItem key={item.id}>{item.name}</SelectItem>
+									)}
 								</Select>
 							)}
 						/>

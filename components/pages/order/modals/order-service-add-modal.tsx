@@ -65,10 +65,12 @@ export function OrderServiceAddModal({ stateControl, onSubmit }: Props) {
 									variant='bordered'
 									items={servicesFetch.data || []}
 									multiple={false}
-									onSelectionChange={a => field.onChange(+[...a][0])}
+									onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 									errorMessage={fieldState.error?.message}
 								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+									{(item: any) => (
+										<SelectItem key={item.id}>{item.name}</SelectItem>
+									)}
 								</Select>
 							)}
 						/>

@@ -66,9 +66,11 @@ export function OrderPaymentEditModal({
 									items={data || []}
 									multiple={false}
 									defaultSelectedKeys={new Set([payment.id])}
-									onSelectionChange={a => field.onChange(+[...a][0])}
+									onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+									{(item: any) => (
+										<SelectItem key={item.id}>{item.name}</SelectItem>
+									)}
 								</Select>
 							)}
 						/>

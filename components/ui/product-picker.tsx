@@ -9,9 +9,9 @@ interface Props {
 }
 
 export default function ProductPicker({ onSelect }: Props) {
-	const [selectedItem, setSelectedItem] = useState()
+	const [selectedItem, setSelectedItem] = useState<Record<string, any>>()
 
-	let list = useAsyncList({
+	let list = useAsyncList<[]>({
 		async load({ signal, filterText }) {
 			if (filterText) {
 				try {
@@ -44,7 +44,7 @@ export default function ProductPicker({ onSelect }: Props) {
 					onSelect(item.id)
 				}}
 			>
-				{item => (
+				{(item: any) => (
 					<AutocompleteItem key={JSON.stringify(item)}>
 						<div className='flex items-center gap-4'>
 							<Image

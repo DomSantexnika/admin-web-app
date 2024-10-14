@@ -49,18 +49,18 @@ export default function AttributePickerItem({
 			<Select
 				label='Атрибут'
 				items={data || []}
-				onSelectionChange={set => {
-					setAttributeId(+[...set][0])
+				onSelectionChange={(a: any) => {
+					setAttributeId(+[...a][0])
 				}}
 				disabled={isLoading}
 				isLoading={isLoading}
 				size='sm'
 			>
-				{item =>
+				{(item: any) =>
 					item.attributes.length && (
 						<SelectSection showDivider title={item.name}>
-							{item.attributes.map(i => (
-								<SelectItem key={i.id}>{i.name}</SelectItem>
+							{item.attributes.map((item: any) => (
+								<SelectItem key={item.id}>{item.name}</SelectItem>
 							))}
 						</SelectSection>
 					)
@@ -69,8 +69,8 @@ export default function AttributePickerItem({
 			<Select
 				label='Значения'
 				items={values}
-				onSelectionChange={set => {
-					const id = +[...set][0]
+				onSelectionChange={(a: any) => {
+					const id = +[...a][0]
 					setValueId(id)
 					onSelect({ attributeId: attributeId!, valueId: id })
 				}}
@@ -78,7 +78,7 @@ export default function AttributePickerItem({
 				isLoading={valuesSelectLoading}
 				size='sm'
 			>
-				{i => <SelectItem key={i.id}>{i.value}</SelectItem>}
+				{(item: any) => <SelectItem key={item.id}>{item.value}</SelectItem>}
 			</Select>
 			<Button color='danger' onClick={onDeleteClick}>
 				<Trash2 size={16} />

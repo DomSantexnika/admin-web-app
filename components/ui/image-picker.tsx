@@ -130,6 +130,7 @@ export function ImagePicker({
 									<img
 										src={item.src}
 										className='object-contain w-full h-full p-2 cursor-pointer'
+										alt=''
 									/>
 								</PhotoView>
 								<div
@@ -141,7 +142,7 @@ export function ImagePicker({
 									{item.imageId ? (
 										<span>Идентификатор: {item.imageId}</span>
 									) : (
-										<span>{(item.file?.size / 1024).toFixed(2) + ' КБ'}</span>
+										<span>{(item.file?.size! / 1024).toFixed(2) + ' КБ'}</span>
 									)}
 								</div>
 							</div>

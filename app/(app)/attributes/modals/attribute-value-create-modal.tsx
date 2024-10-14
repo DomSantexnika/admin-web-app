@@ -92,12 +92,14 @@ export const AttributeValueCreateModal = ({ onSubmit }: Props) => {
 											label='Атрибут'
 											items={groupsFetch.data}
 										>
-											{item =>
+											{(item: any) =>
 												item.attributes.length && (
 													<SelectSection showDivider title={item.name}>
-														{item.attributes.map(i => (
-															<SelectItem key={i.id}>{i.name}</SelectItem>
-														))}
+														{item.attributes.map(
+															(i: { id: number; name: string }) => (
+																<SelectItem key={i.id}>{i.name}</SelectItem>
+															)
+														)}
 													</SelectSection>
 												)
 											}

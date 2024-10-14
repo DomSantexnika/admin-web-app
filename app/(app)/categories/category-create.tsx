@@ -136,10 +136,12 @@ export const CategoryCreate = ({ onSubmit }: Props) => {
 													variant='bordered'
 													items={categoriesFetch.data || []}
 													multiple={false}
-													onSelectionChange={a => field.onChange(+[...a][0])}
+													onSelectionChange={(a: any) =>
+														field.onChange(+[...a][0])
+													}
 													errorMessage={fieldState.error?.message}
 												>
-													{item => (
+													{(item: any) => (
 														<SelectItem key={item.id}>{item.name}</SelectItem>
 													)}
 												</Select>

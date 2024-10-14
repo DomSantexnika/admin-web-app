@@ -24,7 +24,7 @@ export function OrderServiceEditModal({ item, stateControl, onSubmit }: Props) {
 
 	const submit: SubmitHandler<Inputs> = data => {
 		onSubmit({
-			price: data?.price ? +data.price : undefined,
+			price: data?.price ? +data.price : 0,
 		})
 	}
 

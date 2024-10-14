@@ -79,9 +79,11 @@ export function OrderDeliveryEditModal({
 									items={data || []}
 									multiple={false}
 									defaultSelectedKeys={new Set([delivery.deliveryMethodId])}
-									onSelectionChange={a => field.onChange(+[...a][0])}
+									onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 								>
-									{item => <SelectItem key={item.id}>{item.name}</SelectItem>}
+									{(item: any) => (
+										<SelectItem key={item.id}>{item.name}</SelectItem>
+									)}
 								</Select>
 							)}
 						/>
@@ -97,9 +99,9 @@ export function OrderDeliveryEditModal({
 									variant='bordered'
 									items={citiesFetch.data || []}
 									multiple={false}
-									onSelectionChange={a => field.onChange(+[...a][0])}
+									onSelectionChange={(a: any) => field.onChange(+[...a][0])}
 								>
-									{item => (
+									{(item: any) => (
 										<SelectItem key={item.id}>
 											[{item.code}] {item.name} ({item.deliveryPrice} руб.)
 										</SelectItem>
