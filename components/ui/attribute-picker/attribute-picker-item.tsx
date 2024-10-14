@@ -2,18 +2,23 @@ import axios from '@/lib/axios'
 import { Button, Select, SelectItem, SelectSection } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { attributePickerContext } from '.'
 
 interface Props {
 	onSelect: (value: { attributeId: number; valueId: number }) => void
-	onDeleteClick: () => void
+	onDeleteClick: (attributeId: number | null) => void
+	onAttributeSelect: (id: number) => void
 }
 
 export default function AttributePickerItem({
 	onSelect,
 	onDeleteClick,
+	onAttributeSelect,
 }: Props) {
+	const selectedAttributesContext = useContext(attributePickerContext)
+
 	const [attributeId, setAttributeId] = useState<number | null>(null)
 	const [valueId, setValueId] = useState<number | null>(null)
 	const [values, setValues] = useState([])
@@ -30,7 +35,7 @@ export default function AttributePickerItem({
 				})
 				.catch(err => {
 					toast.error(err.message)
-					onDeleteClick()
+					onDeleteClick(attributeId)
 				})
 				.finally(() => setValuesSelectLoading(false))
 		}
@@ -50,7 +55,9 @@ export default function AttributePickerItem({
 				label='Атрибут'
 				items={data || []}
 				onSelectionChange={(a: any) => {
+					const id = +[...a][0]
 					setAttributeId(+[...a][0])
+					onAttributeSelect(id)
 				}}
 				disabled={isLoading}
 				isLoading={isLoading}
@@ -59,9 +66,14 @@ export default function AttributePickerItem({
 				{(item: any) =>
 					item.attributes.length && (
 						<SelectSection showDivider title={item.name}>
-							{item.attributes.map((item: any) => (
-								<SelectItem key={item.id}>{item.name}</SelectItem>
-							))}
+							{item.attributes.map(
+								(item: any) =>
+									!selectedAttributesContext.includes(item.id) && (
+										<SelectItem key={item.id} value={item.name}>
+											{item.name}
+										</SelectItem>
+									)
+							)}
 						</SelectSection>
 					)
 				}
@@ -80,7 +92,7 @@ export default function AttributePickerItem({
 			>
 				{(item: any) => <SelectItem key={item.id}>{item.value}</SelectItem>}
 			</Select>
-			<Button color='danger' onClick={onDeleteClick}>
+			<Button color='danger' onClick={() => onDeleteClick(attributeId)}>
 				<Trash2 size={16} />
 			</Button>
 		</div>
