@@ -34,7 +34,7 @@ export default function AttributePickerItem({
 				})
 				.finally(() => setValuesSelectLoading(false))
 		}
-	}, [attributeId])
+	}, [attributeId, onDeleteClick])
 
 	const { data, isLoading } = useQuery({
 		queryKey: ['attributes', 'select'],
