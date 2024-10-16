@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
+	basePath: process.env.BASE_PATH || undefined,
 	images: {
 		formats: ['image/avif', 'image/webp'],
 		remotePatterns: [

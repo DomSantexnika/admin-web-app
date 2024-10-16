@@ -1,8 +1,9 @@
 'use client'
 
 import axios from '@/lib/axios'
-import { Button, Link } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
 import ProductTable from './product-table'
 
 export default function ProductsPage() {

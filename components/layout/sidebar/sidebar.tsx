@@ -8,6 +8,7 @@ import { useCallback } from 'react'
 import { HomeIcon } from '@/components/icons/sidebar/home-icon'
 import Logo from '@/components/shared/logo'
 import { DarkModeSwitchButton } from '@/components/ui/darkmode-switch-button'
+import { appConfig } from '@/config/app'
 import { useSidebarContext } from '../layout-context'
 import { SidebarItem } from './sidebar-item'
 import { SidebarMenu } from './sidebar-menu'
@@ -74,7 +75,7 @@ export const SidebarWrapper = () => {
 						<UILink
 							isExternal
 							color='foreground'
-							href='https://localhost:3000'
+							href={appConfig.shopUrl}
 							target='_blank'
 						>
 							Интернет-магазин
