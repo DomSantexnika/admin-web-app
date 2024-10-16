@@ -1,6 +1,7 @@
 'use client'
 
 import { LoadingOverlay } from '@/components/shared/loding-oerlay'
+import { appConfig } from '@/config/app'
 import axios from '@/lib/axios'
 import { time } from '@/lib/time'
 import { Button, Link, useDisclosure } from '@nextui-org/react'
@@ -169,7 +170,7 @@ export function OrderShowPage({ id }: Props) {
 				<div>
 					<Link
 						isExternal
-						href={`http://localhost:8080/orders/${data.id}/pdf`}
+						href={`http://${appConfig.apiUrl}/orders/${data.id}/pdf`}
 						target='_blank'
 					>
 						<Printer />
