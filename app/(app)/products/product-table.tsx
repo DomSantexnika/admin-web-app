@@ -1,3 +1,4 @@
+import { appConfig } from '@/config/app'
 import {
 	Button,
 	Skeleton,
@@ -55,7 +56,7 @@ export default function ProductTable({ data }: Props) {
 							<TableCell className='text-right'>
 								<Button
 									as={Link}
-									href={`http://localhost:3000/products/${item.slug}`}
+									href={`${appConfig.shopUrl}/products/${item.slug}`}
 									color='success'
 									size='sm'
 									className='mr-3'
