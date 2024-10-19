@@ -1,3 +1,4 @@
+import { Layout } from '@/components/layout/layout'
 import { fontSans } from '@/config/fonts'
 import '@/styles/globals.css'
 import clsx from 'clsx'
@@ -20,7 +21,9 @@ export default function RootLayout({
 	return (
 		<html lang='ru'>
 			<body className={clsx('font-sans antialiased', fontSans.className)}>
-				<Providers>{children}</Providers>
+				<Providers>
+					<Layout>{children}</Layout>
+				</Providers>
 			</body>
 		</html>
 	)

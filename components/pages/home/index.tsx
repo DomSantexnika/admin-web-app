@@ -1,6 +1,6 @@
 'use client'
 
-import OrderTable from '@/app/(app)/orders/order-table'
+import OrderTable from '@/app/orders/order-table'
 import { Link } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 
