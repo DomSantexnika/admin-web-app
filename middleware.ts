@@ -1,24 +1,24 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
+import { appConfig } from './config/app'
+import axios from './lib/axios'
 
-export function middleware(request: NextRequest) {
-	// const { pathname } = request.nextUrl;
+export async function middleware(request: NextRequest) {
+	const resp = await axios
+		.get('/auth', {
+			headers: {
+				Cookie: request.headers.get('Cookie'),
+			},
+		})
+		.catch(err => {})
 
-	// if (
-	//   (pathname === "/login" || pathname === "/register") &&
-	//   request.cookies.has("userAuth")
-	// )
-	//   return NextResponse.redirect(new URL("/", request.url));
+	if (resp && resp.data && resp.data.role === 'ADMIN') {
+		return NextResponse.next()
+	}
 
-	// if (
-	//   (pathname === "/" || pathname === "/accounts") &&
-	//   !request.cookies.has("userAuth")
-	// )
-	//   return NextResponse.redirect(new URL("/login", request.url));
-
-	return NextResponse.next()
+	return NextResponse.redirect(appConfig.shopUrl)
 }
 
 export const config = {
-	matcher: ['/', '/accounts', '/login', '/register'],
+	matcher: ['/'],
 }

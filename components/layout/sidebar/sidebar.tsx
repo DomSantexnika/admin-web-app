@@ -1,4 +1,3 @@
-import { deleteAuthCookie } from '@/actions/auth.action'
 import { menuConfig } from '@/config/menu'
 import { Link as UILink } from '@nextui-org/react'
 import Link from 'next/link'
@@ -9,6 +8,7 @@ import { HomeIcon } from '@/components/icons/sidebar/home-icon'
 import Logo from '@/components/shared/logo'
 import { DarkModeSwitchButton } from '@/components/ui/darkmode-switch-button'
 import { appConfig } from '@/config/app'
+import axiosClassic from '@/lib/axios'
 import { useSidebarContext } from '../layout-context'
 import { SidebarItem } from './sidebar-item'
 import { SidebarMenu } from './sidebar-menu'
@@ -21,8 +21,8 @@ export const SidebarWrapper = () => {
 	const router = useRouter()
 
 	const handleLogout = useCallback(async () => {
-		await deleteAuthCookie()
-		router.replace('/login')
+		await axiosClassic.post('/auth/logout')
+		router.replace(appConfig.shopUrl)
 	}, [router])
 
 	return (
