@@ -59,7 +59,7 @@ export const BrandCreateModal = ({ onSubmit }: Props) => {
 		let imageId = null
 
 		if (image) {
-			const createImageResult = await imageService.create(image.file)
+			const createImageResult = await imageService.create(image.file, 'brands')
 			imageId = createImageResult.id || null
 		}
 

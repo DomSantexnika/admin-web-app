@@ -80,7 +80,10 @@ export function ProductCreatePage() {
 			}
 
 			for (let i = 0; i < data.images.length; i++) {
-				const result = await imageService.create(data.images[i].file)
+				const result = await imageService.create(
+					data.images[i].file,
+					'products'
+				)
 
 				if (result) {
 					if (data.images[i].isMain) payload.imageId = result.id

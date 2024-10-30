@@ -6,6 +6,12 @@ const nextConfig = {
 		formats: ['image/avif', 'image/webp'],
 		remotePatterns: [
 			{
+				protocol: 'http',
+				hostname: 'localhost',
+				port: '9000',
+				pathname: '/**',
+			},
+			{
 				protocol: 'https',
 				hostname: 'storage.santexnika-house.ru',
 				port: '',

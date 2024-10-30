@@ -98,7 +98,6 @@ export function ImagePicker({
 			<div className='grid grid-cols-3 gap-2'>
 				<PhotoProvider>
 					{items.map((item, index) => {
-						console.log(item)
 						return (
 							<div
 								key={item.src}
