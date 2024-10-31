@@ -34,7 +34,9 @@ export default function AttributeTable({ data }: Props) {
 				{data &&
 					data.map(item => (
 						<TableRow key={item.id}>
-							<TableCell>{item.group.name}</TableCell>
+							<TableCell>
+								{item.group ? item.group.name : 'Без группы'}
+							</TableCell>
 							<TableCell>{item.name}</TableCell>
 							<TableCell>{item.type}</TableCell>
 							<TableCell>

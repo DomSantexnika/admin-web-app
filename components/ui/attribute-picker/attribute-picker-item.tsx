@@ -1,5 +1,5 @@
 import axios from '@/lib/axios'
-import { Button, Select, SelectItem, SelectSection } from '@nextui-org/react'
+import { Button, Select, SelectItem } from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
 import { useContext, useEffect, useState } from 'react'
@@ -63,20 +63,13 @@ export default function AttributePickerItem({
 				isLoading={isLoading}
 				size='sm'
 			>
-				{(item: any) =>
-					item.attributes.length && (
-						<SelectSection showDivider title={item.name}>
-							{item.attributes.map(
-								(item: any) =>
-									!selectedAttributesContext.includes(item.id) && (
-										<SelectItem key={item.id} value={item.name}>
-											{item.name}
-										</SelectItem>
-									)
-							)}
-						</SelectSection>
+				{(item: any) => {
+					return (
+						<SelectItem key={item.id} value={item.name}>
+							{item.name}
+						</SelectItem>
 					)
-				}
+				}}
 			</Select>
 			<Select
 				label='Значения'

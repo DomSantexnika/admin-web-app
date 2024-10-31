@@ -20,8 +20,6 @@ export default function AttributePicker({ onChange }: Props) {
 	const [selectedAttributeIds, setSelectedAttributeIds] = useState<number[]>([])
 	const [canAdd, setCanAdd] = useState(true)
 
-	console.log('Parent', selectedAttributeIds)
-
 	return (
 		<attributePickerContext.Provider value={selectedAttributeIds}>
 			<div className='flex flex-col gap-4'>
