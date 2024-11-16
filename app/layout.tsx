@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 		template: '%s | Панель-управления',
 		default: 'Панель-управления',
 	},
-	description: 'Панель-управления дом-сантехники',
+	description: 'Панель-управления',
 }
 
 export default function RootLayout({
